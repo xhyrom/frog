@@ -1,10 +1,13 @@
-pub struct Frog {
-
+pub struct FrogCore {
 }
 
-impl Frog {
+impl FrogCore {
     pub fn test() {
         println!("FROG CORE HERE");
+    }
+
+    pub fn init(name: String, directory: String, language: String) {
+        
     }
 }
 
