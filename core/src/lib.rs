@@ -33,14 +33,14 @@ impl FrogCore {
         let mut map = HashMap::new();
         let path = Path::new(directory);
 
-        map.insert("project_name".to_string(), name);
-        map.insert("project_language".to_string(), language);
+        map.insert("name".to_string(), name);
+        map.insert("language".to_string(), language);
 
         let config = config::Config {
             variables: map,
             tasks: vec![config::Task {
                 name: "build".to_string(),
-                commands: vec!["echo \"Hello from Frog!\"".to_string(), "echo \"{project_name} - {project_language}\"".to_string()],
+                commands: vec!["echo \"Hello from Frog!\"".to_string(), "echo \"{name} - {language}\"".to_string()],
             }],
         };
         

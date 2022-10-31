@@ -15,7 +15,6 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         task = matches.get_one::<String>("task").unwrap().to_string();
     }
 
-    // TASSSSSSSK
     let config = FrogCore::find_config();
     if config.is_none() {
         error!("No config file found");
