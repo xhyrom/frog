@@ -5,6 +5,10 @@ pub struct FrogLogger {}
 pub mod colors;
 
 impl FrogLogger {
+    pub fn debug(message: &str) -> () {
+        FrogLogger::log("debug", colors::BLACK, message)
+    }
+
     pub fn info(message: &str) {
         FrogLogger::log("info", colors::GREEN, message);
     }
@@ -18,8 +22,17 @@ impl FrogLogger {
     }
 
     pub fn log(prefix: &str, color: &str, message: &str) {
-        println!("{}{}  {}{}    {}{}", colors::GRAY, Local::now().format("%d/%m/%Y %H:%M"), color, prefix, colors::RESET, message);
+        println!("{}{}  {}{}{}:    {}", colors::GRAY, Local::now().format("%d/%m/%Y %H:%M"), color, prefix, colors::RESET, message);
     }
+}
+
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)*) => {
+        {
+            $crate::FrogLogger::debug(format!($($arg)*).as_str())
+        }
+    };
 }
 
 #[macro_export]
