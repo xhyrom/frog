@@ -40,7 +40,7 @@ impl FrogCore {
             variables: map,
             tasks: vec![config::Task {
                 name: "build".to_string(),
-                commands: vec!["echo \"Hello from Frog!\"".to_string(), "echo \"{name} - {language}\"".to_string()],
+                commands: vec!["echo \"Hello from Frog!\"".to_string(), "echo \"${name} - ${language}\"".to_string()],
             }],
         };
         

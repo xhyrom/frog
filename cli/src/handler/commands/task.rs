@@ -33,6 +33,7 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
                 }
 
                 let output = std::process::Command::new("sh")
+                    .envs(&config.variables)
                     .arg("-c")
                     .arg(
                         if !show_logs(command) { command[1..command.len()].to_string() } else { command.to_string() }
