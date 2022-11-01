@@ -9,6 +9,7 @@ fn show_logs(command: &String) -> bool {
 pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
     #[allow(unused_assignments)]
     let mut task = "".to_string();
+
     if fallback {
         task = matches.subcommand_name().unwrap().to_string();
     } else {
@@ -29,7 +30,7 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
                 let command = &command;
 
                 if show_logs(command) {
-                    info!("Running command: {}", command);
+                    info!("{}", command);
                 }
 
                 let output = std::process::Command::new("sh")

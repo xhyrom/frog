@@ -63,14 +63,6 @@ pub fn parse_config(content: String) -> Config {
             });
             task_content = Vec::new();
         } else if task {
-/*            let mut line_copy = line.to_string();
-
-            for var in variables.iter() {
-                if line_copy.contains(var.0) {
-                    line_copy = line_copy.replace((format!("{{{}}}", &var.0)).as_str(), var.1);
-                }
-            }*/
-
             task_content.push(
                 format!("{}\n", line.trim())
             );

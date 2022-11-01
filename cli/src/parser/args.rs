@@ -33,6 +33,7 @@ pub fn command() -> Command {
         .author("xHyroM")
         .arg_required_else_help(true)
         .allow_external_subcommands(true)
+        .arg(arg!(-v --version))
         .subcommand(
             Command::new("init")
                 .about("Initialize a new frog project")
