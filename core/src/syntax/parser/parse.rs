@@ -1,3 +1,5 @@
+use frog_logger::warn;
+
 /**
  * Base is from https://github.com/eatonphil/lust
  * Under Apache 2.0 license
@@ -28,7 +30,7 @@ pub fn parse_expression(raw: &[char], tokens: &[Token], index: usize) -> Option<
         while !expect_syntax(tokens, next_index, ")") {
             if !arguments.is_empty() {
                 if !expect_syntax(tokens, next_index, ",") {
-                    println!(
+                    warn!(
                         "{}",
                         tokens[next_index]
                             .loc
@@ -45,7 +47,7 @@ pub fn parse_expression(raw: &[char], tokens: &[Token], index: usize) -> Option<
                 next_index = next_next_index;
                 arguments.push(arg);
             } else {
-                println!(
+                warn!(
                     "{}",
                     tokens[next_index]
                         .loc
@@ -76,7 +78,7 @@ pub fn parse_expression(raw: &[char], tokens: &[Token], index: usize) -> Option<
     next_index += 1; // Skip past op
 
     if next_index >= tokens.len() {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -90,7 +92,7 @@ pub fn parse_expression(raw: &[char], tokens: &[Token], index: usize) -> Option<
         TokenKind::Number => Expression::Literal(Literal::Number(rtoken)),
         TokenKind::Identifier => Expression::Literal(Literal::Identifier(rtoken)),
         _ => {
-            println!(
+            warn!(
                 "{}",
                 rtoken
                     .loc
@@ -122,7 +124,7 @@ pub fn parse_expression_statement(
     let (expr, next_next_index) = res;
     next_index = next_next_index;
     if !expect_syntax(tokens, next_index, ";") {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -143,7 +145,7 @@ pub fn parse_task(raw: &[char], tokens: &[Token], index: usize) -> Option<(State
 
     let mut next_index = index + 1; // Skip past task keyword
     if !expect_identifier(tokens, next_index) {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -155,7 +157,7 @@ pub fn parse_task(raw: &[char], tokens: &[Token], index: usize) -> Option<(State
 
     next_index += 1; // Skip past name
     if !expect_syntax(tokens, next_index, "(") {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -169,7 +171,7 @@ pub fn parse_task(raw: &[char], tokens: &[Token], index: usize) -> Option<(State
     while !expect_syntax(tokens, next_index, ")") {
         if !parameters.is_empty() {
             if !expect_syntax(tokens, next_index, ",") {
-                println!("{}", tokens[next_index].loc.debug(raw, "Expected comma or close parenthesis after parameter in function declaration"));
+                warn!("{}", tokens[next_index].loc.debug(raw, "Expected comma or close parenthesis after parameter in function declaration"));
                 return None;
             }
 
@@ -183,7 +185,7 @@ pub fn parse_task(raw: &[char], tokens: &[Token], index: usize) -> Option<(State
     next_index += 1; // Skip past close paren
 
     if !expect_syntax(tokens, next_index, "{") {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -201,7 +203,7 @@ pub fn parse_task(raw: &[char], tokens: &[Token], index: usize) -> Option<(State
             next_index = next_next_index;
             statements.push(stmt);
         } else {
-            println!(
+            warn!(
                 "{}",
                 tokens[next_index]
                     .loc
@@ -231,7 +233,7 @@ pub fn parse_declare(raw: &[char], tokens: &[Token], index: usize) -> Option<(St
     let mut next_index = index + 1; // Skip past declare
 
     if !expect_identifier(tokens, next_index) {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -244,7 +246,7 @@ pub fn parse_declare(raw: &[char], tokens: &[Token], index: usize) -> Option<(St
     next_index += 1; // Skip past name
 
     if !expect_syntax(tokens, next_index, "=") {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -257,7 +259,7 @@ pub fn parse_declare(raw: &[char], tokens: &[Token], index: usize) -> Option<(St
 
     let res = parse_expression(raw, tokens, next_index);
     if res.is_none() {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc
@@ -270,7 +272,7 @@ pub fn parse_declare(raw: &[char], tokens: &[Token], index: usize) -> Option<(St
     next_index = next_next_index;
 
     if !expect_syntax(tokens, next_index, ";") {
-        println!(
+        warn!(
             "{}",
             tokens[next_index]
                 .loc

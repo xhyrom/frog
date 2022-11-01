@@ -176,6 +176,9 @@ dependencies = [
 [[package]]
 name = "frog_core"
 version = "0.1.0"
+dependencies = [
+ "frog_logger",
+]
 
 [[package]]
 name = "frog_logger"
