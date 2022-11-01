@@ -1,5 +1,7 @@
 use std::{fs, io::{Error, ErrorKind}, collections::HashMap};
 
+use crate::syntax::{eval::{into_config}, parser, lexer, compiler};
+
 #[derive(Debug)]
 pub struct Task {
     pub name: String,
@@ -9,7 +11,7 @@ pub struct Task {
 #[derive(Debug)]
 pub struct Config {
     pub variables: HashMap<String, String>,
-    pub tasks: Vec<Task>,
+    pub functions: HashMap<String, Vec<Task>>,
 }
 
 impl Config {
@@ -20,12 +22,16 @@ impl Config {
             config.push_str(&format!("declare {} = {}\n", variable.0, variable.1));
         }
 
-        for task in self.tasks {
+        for task in self.functions {
             config.push_str(
                 &format!(
                     "\ntask {} {{\n{}\n}}\n",
-                    task.name,
-                    task.commands.iter().map(|x| "  ".to_owned() + x).collect::<Vec<String>>().join("\n")
+                    task.0,
+                    task.1
+                        .iter()
+                        .map(|t| format!("    {}", t.commands.join("\n    ")))
+                        .collect::<Vec<String>>()
+                        .join("\n")
                 )
             );
         }
@@ -34,52 +40,7 @@ impl Config {
     }
 }
 
-pub fn parse_config(content: String) -> Config {
-    let mut variables = HashMap::new();
-    let mut tasks = Vec::new();
-
-    let mut task_name = String::new();
-    let mut task_content = Vec::new();
-    let mut task = false;
-
-    for line in content.lines() {
-        if line.starts_with("#") || line.starts_with("//") {
-            continue;
-        } else if line.starts_with("declare") && line.contains("=") {
-            let temp_collected_variable = line.split("=").collect::<Vec<&str>>();
-
-            variables.insert(
-                temp_collected_variable[0].to_string().replace("declare", "").replace(" ", ""),
-                cut_quotes(temp_collected_variable[1].trim().to_string())
-            );
-        } else if line.contains("task") && line.ends_with("{") {
-            task_name = line.replace("task ", "").replace("{", "").trim().to_string();
-            task = true;
-        } else if task && line == "}" {
-            task = false;
-            tasks.push(Task {
-                name: (&task_name).to_string(),
-                commands: task_content,
-            });
-            task_content = Vec::new();
-        } else if task {
-            task_content.push(
-                format!("{}\n", line.trim())
-            );
-        }
-    }
-
-    drop(task_name);
-    drop(task_content);
-    drop(task);
-
-    return Config {
-        variables,
-        tasks,
-    };
-}
-
-pub fn find(path: String) -> std::io::Result<Config> {
+pub fn find(path: String) -> std::io::Result<String> {
     for entry in fs::read_dir(path)? {
         let entry = entry?;
         let path = entry.path();
@@ -89,13 +50,31 @@ pub fn find(path: String) -> std::io::Result<Config> {
             let content = fs::read_to_string(path)?;
             drop(path_string);
 
-            return Ok(parse_config(content));
+            return Ok(content);
         }
     }
 
     Err(Error::new(ErrorKind::NotFound, "uwu.frog not found"))
 }
 
-fn cut_quotes(string: String) -> String {
-    return if string.starts_with("\"") && string.ends_with("\"") { string[1..string.len() - 1].to_string() } else { string };
+pub fn get_config(content: String) -> std::io::Result<Config> {
+    let raw = content.chars().collect::<Vec<char>>();
+
+    let lex = lexer::lex(&raw);
+    if lex.is_err() {
+        return Err(Error::new(ErrorKind::InvalidData, lex.err().unwrap()));
+    }
+
+    let lex = lex.unwrap();
+
+    let parse = parser::parse(&raw, lex);
+    if parse.is_err() {
+        return Err(Error::new(ErrorKind::InvalidData, parse.err().unwrap()));
+    }
+
+    let parse = parse.unwrap();
+
+    let compile = compiler::compile(&raw, parse);
+
+    Ok(into_config(compile))
 }

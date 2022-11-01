@@ -1,10 +1,6 @@
 use clap::ArgMatches;
-use frog_core::{FrogCore};
-use frog_logger::{info, error};
-
-fn show_logs(command: &String) -> bool {
-    return !command.starts_with("@");
-}
+use frog_core::{config, syntax};
+use frog_logger::{error, info};
 
 pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
     #[allow(unused_assignments)]
@@ -16,35 +12,26 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         task = matches.get_one::<String>("task").unwrap().to_string();
     }
 
-    let config = FrogCore::find_config();
-    if config.is_none() {
+    let config = config::find(".".to_string());
+    if config.is_err() {
         error!("No config file found");
         return;
     }
 
-    let config = config.unwrap();
-
-    for t in config.tasks {
-        if t.name == task {
-            for command in t.commands {
-                let command = &command;
-
-                if show_logs(command) {
-                    info!("{}", command);
-                }
-
-                let output = std::process::Command::new("sh")
-                    .envs(&config.variables)
-                    .arg("-c")
-                    .arg(
-                        if !show_logs(command) { command[1..command.len()].to_string() } else { command.to_string() }
-                    )
-                    .output()
-                    .expect("Failed to execute command");
-                
-                println!("{}", String::from_utf8_lossy(&output.stdout));
-            }
-            break;
-        }
+    let config = config::get_config(config.unwrap());
+    if config.is_err() {
+        error!("{}", config.err().unwrap());
+        return;
     }
+
+    let config = config.unwrap();
+    
+    info!("Running task: {}", task);
+
+    match syntax::eval::run_task(&config, task.to_owned()) {
+        Ok(_) => info!("Task {} completed", task),
+        Err(e) => error!("{}", e),
+    }
+
+    drop(task);
 }
