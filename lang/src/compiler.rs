@@ -3,7 +3,7 @@
  * Under Apache 2.0 license
  */
 
-use crate::syntax::parser::*;
+use crate::parser::*;
 
 #[derive(Debug)]
 pub enum Instruction {

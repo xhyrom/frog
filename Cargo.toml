@@ -3,5 +3,6 @@
 members = [
     "cli",
     "core",
-    "logger"
+    "logger",
+    "lang"
 ]

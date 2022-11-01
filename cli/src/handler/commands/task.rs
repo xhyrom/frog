@@ -1,5 +1,5 @@
 use clap::ArgMatches;
-use frog_core::{config, syntax};
+use frog_core::{config, eval};
 use frog_logger::{error, info};
 
 pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
@@ -28,7 +28,7 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
     
     info!("Running task: {}", task);
 
-    match syntax::eval::run_task(&config, task.to_owned()) {
+    match eval::run_task(&config, task.to_owned()) {
         Ok(_) => info!("Task {} completed", task),
         Err(e) => error!("{}", e),
     }

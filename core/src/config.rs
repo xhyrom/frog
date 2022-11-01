@@ -1,6 +1,8 @@
 use std::{fs, io::{Error, ErrorKind}, collections::HashMap};
 
-use crate::syntax::{eval::{into_config}, parser, lexer, compiler};
+use lang::{lexer, parser, compiler};
+
+use crate::eval::into_config;
 
 #[derive(Debug)]
 pub struct Task {

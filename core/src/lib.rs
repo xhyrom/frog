@@ -5,7 +5,7 @@ use config::{Config, Task};
 //use crate::syntax::{lexer, eval, parser};
 
 pub mod config;
-pub mod syntax;
+pub mod eval;
 
 pub struct FrogCore;
 

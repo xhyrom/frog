@@ -177,7 +177,7 @@ dependencies = [
 name = "frog_core"
 version = "0.1.0"
 dependencies = [
- "frog_logger",
+ "lang",
 ]
 
 [[package]]
@@ -233,6 +233,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "49409df3e3bf0856b916e2ceaca09ee28e6871cf7d9ce97a692cacfdb2a25a47"
 dependencies = [
  "wasm-bindgen",
+]
+
+[[package]]
+name = "lang"
+version = "0.1.0"
+dependencies = [
+ "frog_logger",
 ]
 
 [[package]]

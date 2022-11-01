@@ -1,8 +1,8 @@
 use std::{collections::HashMap, io::{ErrorKind, Error}};
 
-use crate::config::{Config, Task};
+use lang::compiler::{Program, Instruction};
 
-use super::compiler::{Program, Instruction};
+use crate::config::{Config, Task};
 
 pub fn into_config(pgrm: Program) -> Config {
     let mut variables = HashMap::new();
