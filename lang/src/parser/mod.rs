@@ -226,6 +226,7 @@ impl<'a> Parser<'a> {
             Token::Ident(_) => self.parse_ident_expr(),
             Token::Int(_) => self.parse_int_expr(),
             Token::String(_) => self.parse_string_expr(),
+            Token::Char(_) => self.parse_char_expr(),
             Token::Bool(_) => self.parse_bool_expr(),
             Token::Lbracket => self.parse_array_expr(),
             Token::Lbrace => self.parse_hash_expr(),
@@ -295,6 +296,13 @@ impl<'a> Parser<'a> {
     fn parse_string_expr(&mut self) -> Option<Expr> {
         match self.current_token {
             Token::String(ref mut s) => Some(Expr::Literal(Literal::String(s.clone()))),
+            _ => None,
+        }
+    }
+
+    fn parse_char_expr(&mut self) -> Option<Expr> {
+        match self.current_token {
+            Token::Char(ref mut s) => Some(Expr::Literal(Literal::Char(s.clone()))),
             _ => None,
         }
     }
@@ -489,8 +497,6 @@ impl<'a> Parser<'a> {
         if !self.expect_next_token(Token::Lparen) {
             return None;
         }
-
-        println!("{:?}, {:?}", self.current_token, self.next_token);
 
         let params = match self.parse_func_params() {
             Some(params) => params,

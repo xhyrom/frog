@@ -114,6 +114,9 @@ impl<'a> Lexer<'a> {
             b'"' => {
                 return self.consume_string();
             }
+            b'\'' => {
+                return self.consume_char();
+            }
             b'\n' => {
                 if self.nextch_is(b'\n') {
                     Token::Blank
@@ -196,5 +199,22 @@ impl<'a> Lexer<'a> {
                 }
             }
         }
+    }
+
+    // TODO: do it better lol
+    fn consume_char(&mut self) -> Token {
+        self.read_char();
+
+        let literal = self.ch;
+
+        self.read_char();
+
+        if self.ch != b'\'' {
+            return Token::Illegal;
+        }
+
+        self.read_char();
+
+        Token::Char(literal as char)
     }
 }

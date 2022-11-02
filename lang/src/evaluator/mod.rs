@@ -260,6 +260,7 @@ impl Evaluator {
             Literal::Int(value) => Object::Int(value),
             Literal::Bool(value) => Object::Bool(value),
             Literal::String(value) => Object::String(value),
+            Literal::Char(value) => Object::Char(value),
             Literal::Array(objects) => self.eval_array_literal(objects),
             Literal::Hash(pairs) => self.eval_hash_literal(pairs),
         }

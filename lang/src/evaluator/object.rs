@@ -14,6 +14,7 @@ pub type BuiltinFunc = fn(Vec<Object>) -> Object;
 pub enum Object {
     Int(i64),
     String(String),
+    Char(char),
     Bool(bool),
     Array(Vec<Object>),
     Hash(HashMap<Object, Object>),
@@ -30,6 +31,7 @@ impl fmt::Display for Object {
         match *self {
             Object::Int(ref value) => write!(f, "{}", value),
             Object::String(ref value) => write!(f, "{}", value),
+            Object::Char(ref value) => write!(f, "{}", value),
             Object::Bool(ref value) => write!(f, "{}", value),
             Object::Array(ref objects) => {
                 let mut result = String::new();

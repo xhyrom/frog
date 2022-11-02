@@ -82,6 +82,7 @@ pub enum Expr {
 pub enum Literal {
     Int(i64),
     String(String),
+    Char(char),
     Bool(bool),
     Array(Vec<Expr>),
     Hash(Vec<(Expr, Expr)>),

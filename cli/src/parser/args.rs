@@ -52,6 +52,9 @@ pub fn command() -> Command {
                 .arg(
                     arg!(<task> "Task to run")
                 )
+                .arg(
+                    arg!([args] "Additional arguments").raw(true)
+                )
                 .arg_required_else_help(true)
         )
 }

@@ -3,7 +3,7 @@ use lang::{evaluator::{Evaluator, env::Env, builtins::new_builtins, object::Obje
 
 use crate::config;
 
-pub fn run_task(name: String, config_path: String, custom_builtins: HashMap<String, Object>) -> Result<()> {
+pub fn run_task(name: String, config_path: String, args: Vec<String>, custom_builtins: HashMap<String, Object>) -> Result<()> {
     let mut evaluator = get_evaluator(custom_builtins);
     let config = config::find(config_path);
 
@@ -18,7 +18,10 @@ pub fn run_task(name: String, config_path: String, custom_builtins: HashMap<Stri
         return Err(Error::new(ErrorKind::Other, runner.err().unwrap()));
     }
 
-    let run_task = run_line(&mut evaluator, format!("{}()", name)); 
+    let run_task = run_line(
+        &mut evaluator,
+        format!("{}({})", name, args.iter().map(|x| format!("\"{}\"", x)).collect::<Vec<String>>().join(", "))
+    ); 
 
     if run_task.is_err() {
         return Err(Error::new(ErrorKind::Other, run_task.err().unwrap()));

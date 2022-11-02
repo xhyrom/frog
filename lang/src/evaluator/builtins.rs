@@ -5,8 +5,9 @@ use super::object::Object;
 pub fn new_builtins() -> HashMap<String, Object> {
     let mut builtins = HashMap::new();
     builtins.insert(String::from("len"), Object::Builtin(1, frog_len));
-    builtins.insert(String::from("print"), Object::Builtin(1, frog_print));
+    builtins.insert(String::from("print"), Object::Builtin(-1, frog_print));
     builtins.insert(String::from("typeof"), Object::Builtin(1, frog_typeof));
+    builtins.insert(String::from("bash"), Object::Builtin(1, frog_bash));
     builtins
 }
 
@@ -19,9 +20,7 @@ fn frog_len(args: Vec<Object>) -> Object {
 }
 
 fn frog_print(args: Vec<Object>) -> Object {
-    for arg in args {
-        println!("{}", arg);
-    }
+    println!("{}", args.iter().map(|x| format!("{}", x)).collect::<Vec<String>>().join(" "));
 
     Object::Null
 }
@@ -30,6 +29,7 @@ fn frog_typeof(args: Vec<Object>) -> Object {
     match &args[0] {
         Object::Int(_) => Object::String("int".to_string()),
         Object::String(_) => Object::String("string".to_string()),
+        Object::Char(_) => Object::String("char".to_string()),
         Object::Bool(_) => Object::String("bool".to_string()),
         Object::Array(_) => Object::String("array".to_string()),
         Object::Hash(_) => Object::String("hash".to_string()),
@@ -39,5 +39,24 @@ fn frog_typeof(args: Vec<Object>) -> Object {
         Object::Null => Object::String("null".to_string()),
         Object::ReturnValue(_) => Object::String("return".to_string()),
         Object::Error(_) => Object::String("error".to_string()),
+    }
+}
+
+fn frog_bash(args: Vec<Object>) -> Object {
+    match &args[0] {
+        Object::String(s) => {
+            let output = std::process::Command::new("bash")
+                .arg("-c")
+                .arg(s)
+                .output()
+                .expect("failed to execute process");
+
+            if output.status.success() {
+                return Object::String(String::from_utf8(output.stdout).unwrap());
+            } else {
+                return Object::Error(String::from_utf8(output.stderr).unwrap());
+            }
+        }
+        o => return Object::Error(format!("argument to `bash` not supported, got {}", o)),
     }
 }
