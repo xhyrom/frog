@@ -1,6 +1,8 @@
+pub mod ast;
 pub mod lexer;
 pub mod parser;
-pub mod compiler;
+pub mod evaluator;
+pub mod token;
 
 // TODO: implement fun like task
 // ^ task - can run from CLI

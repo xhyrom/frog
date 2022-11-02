@@ -1,5 +1,7 @@
+use std::collections::HashMap;
+
 use clap::ArgMatches;
-use frog_core::{config, eval};
+use frog_core::{eval};
 use frog_logger::{error, info};
 
 pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
@@ -12,26 +14,15 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         task = matches.get_one::<String>("task").unwrap().to_string();
     }
 
-    let config = config::find(".".to_string());
-    if config.is_err() {
-        error!("No config file found");
+    info!("Running task {}", task);
+
+    let run = eval::run_task(task.to_owned(), ".".to_string(), HashMap::new());
+    if run.is_err() {
+        error!("{}", run.err().unwrap());
         return;
     }
 
-    let config = config::get_config(config.unwrap());
-    if config.is_err() {
-        error!("{}", config.err().unwrap());
-        return;
-    }
-
-    let config = config.unwrap();
-    
-    info!("Running task: {}", task);
-
-    match eval::run_task(&config, task.to_owned()) {
-        Ok(_) => info!("Task {} completed", task),
-        Err(e) => error!("{}", e),
-    }
+    info!("Task {} completed", task);
 
     drop(task);
 }

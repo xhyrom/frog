@@ -1,8 +1,4 @@
-use std::{fs, path::Path, collections::HashMap};
-
-use config::{Config, Task};
-
-//use crate::syntax::{lexer, eval, parser};
+use std::{fs, path::Path};
 
 pub mod config;
 pub mod eval;
@@ -18,30 +14,20 @@ impl FrogCore {
             };
         }
 
-        let mut variables_map = HashMap::new();
         let path = Path::new(directory);
 
-        variables_map.insert("name".to_string(), name);
-        variables_map.insert("language".to_string(), language);
+        let code = String::from(
+            format!("declare name = \"{}\";
+declare language = \"{}\";
 
-        let mut functions_map = HashMap::new();
-
-        functions_map.insert(
-            "init".to_string(),
-            vec![
-                Task {
-                    name: "bash".to_string(),
-                    commands: vec!["echo Hello from Frog!".to_string()],
-                },
-            ],
+task build() {{
+    print(\"Building...\");
+}}", name, language)
         );
 
-        let config = Config {
-            variables: variables_map,
-            functions: functions_map,
-        };
+        println!("{}", code);
         
-        match fs::write(path.join("uwu.frog"), config.serialize()) {
+        match fs::write(path.join("uwu.frog"), code) {
             Ok(_) => return true,
             Err(_) => return false,
         };
