@@ -6,5 +6,5 @@ Frog lang is extremely simple language based on Monkey language
 - Implementations:
   - the entire monkey language
   - tasks (something like fn but with name)
-  - char (data type)
+  - string, int, bool, char, arrray, hashmaps (data types)
   - len, print, typeof, bash (built-in functions)

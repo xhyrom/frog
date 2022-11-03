@@ -201,20 +201,13 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    // TODO: do it better lol
     fn consume_char(&mut self) -> Token {
         self.read_char();
 
-        let literal = self.ch;
-
+        let literal = self.ch as char;
+        self.read_char();
         self.read_char();
 
-        if self.ch != b'\'' {
-            return Token::Illegal;
-        }
-
-        self.read_char();
-
-        Token::Char(literal as char)
+        Token::Char(literal)
     }
 }
