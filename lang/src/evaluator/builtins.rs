@@ -1,4 +1,4 @@
-use std::{collections::HashMap};
+use std::collections::HashMap;
 
 use super::object::Object;
 
@@ -20,7 +20,13 @@ fn frog_len(args: Vec<Object>) -> Object {
 }
 
 fn frog_print(args: Vec<Object>) -> Object {
-    println!("{}", args.iter().map(|x| format!("{}", x)).collect::<Vec<String>>().join(" "));
+    println!(
+        "{}",
+        args.iter()
+            .map(|x| format!("{}", x))
+            .collect::<Vec<String>>()
+            .join(" ")
+    );
 
     Object::Null
 }

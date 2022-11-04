@@ -22,7 +22,15 @@ impl FrogLogger {
     }
 
     pub fn log(prefix: &str, color: &str, message: &str) {
-        println!("{}{}  {}{}{}:    {}", colors::GRAY, Local::now().format("%d/%m/%Y %H:%M"), color, prefix, colors::RESET, message);
+        println!(
+            "{}{}  {}{}{}:    {}",
+            colors::GRAY,
+            Local::now().format("%d/%m/%Y %H:%M"),
+            color,
+            prefix,
+            colors::RESET,
+            message
+        );
     }
 }
 

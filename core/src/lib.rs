@@ -16,17 +16,18 @@ impl FrogCore {
 
         let path = Path::new(directory);
 
-        let code = String::from(
-            format!("declare name = \"{}\";
+        let code = String::from(format!(
+            "declare name = \"{}\";
 declare language = \"{}\";
 
 task build() {{
     print(\"Building...\");
-}}", name, language)
-        );
+}}",
+            name, language
+        ));
 
         println!("{}", code);
-        
+
         match fs::write(path.join("uwu.frog"), code) {
             Ok(_) => return true,
             Err(_) => return false,

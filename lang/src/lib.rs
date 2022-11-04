@@ -1,7 +1,7 @@
 pub mod ast;
+pub mod evaluator;
 pub mod lexer;
 pub mod parser;
-pub mod evaluator;
 pub mod token;
 
 // TODO: implement fun like task

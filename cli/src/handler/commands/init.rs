@@ -1,6 +1,6 @@
-use clap::{ArgMatches};
+use clap::ArgMatches;
 use frog_core::FrogCore;
-use frog_logger::{debug, info, error};
+use frog_logger::{debug, error, info};
 
 use crate::parser::args::Language;
 

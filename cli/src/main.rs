@@ -1,5 +1,5 @@
-mod parser;
 mod handler;
+mod parser;
 
 fn main() {
     let result = parser::args::parse();

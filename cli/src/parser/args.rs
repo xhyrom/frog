@@ -1,5 +1,5 @@
+use clap::{arg, value_parser, Command};
 use std::fmt;
-use clap::{arg, Command, value_parser};
 
 #[derive(clap::ValueEnum, Clone)]
 pub enum Language {
@@ -14,15 +14,15 @@ pub enum Language {
 
 impl fmt::Display for Language {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       match *self {
-           Language::C => write!(f, "C"),
-           Language::Cpp => write!(f, "Cpp"),
-           Language::Crystal => write!(f, "Crystal"),
-           Language::Go => write!(f, "Go"),
-           Language::Rust => write!(f, "Rust"),
-           Language::Typescript => write!(f, "TypeScript"),
-           Language::Other => write!(f, "Other"),
-       }
+        match *self {
+            Language::C => write!(f, "C"),
+            Language::Cpp => write!(f, "Cpp"),
+            Language::Crystal => write!(f, "Crystal"),
+            Language::Go => write!(f, "Go"),
+            Language::Rust => write!(f, "Rust"),
+            Language::Typescript => write!(f, "TypeScript"),
+            Language::Other => write!(f, "Other"),
+        }
     }
 }
 
@@ -33,29 +33,27 @@ pub fn command() -> Command {
         .author("xHyroM")
         .arg_required_else_help(true)
         .allow_external_subcommands(true)
-        .arg(arg!(-v --version))
+        .arg(arg!(-v - -version))
         .subcommand(
             Command::new("init")
                 .about("Initialize a new frog project")
                 .arg(
-                    arg!(<language> "Language to use for the project").value_parser(value_parser!(Language)).ignore_case(true)
+                    arg!(<language> "Language to use for the project")
+                        .value_parser(value_parser!(Language))
+                        .ignore_case(true),
                 )
                 .args(&[
-                    arg!(--name [name]).default_value("frog_project"),
-                    arg!(--directory [directory]).default_value("."),
+                    arg!(--name[name]).default_value("frog_project"),
+                    arg!(--directory[directory]).default_value("."),
                 ])
-                .arg_required_else_help(true)
+                .arg_required_else_help(true),
         )
         .subcommand(
             Command::new("task")
                 .about("Run a task")
-                .arg(
-                    arg!(<task> "Task to run")
-                )
-                .arg(
-                    arg!([args] "Additional arguments").raw(true)
-                )
-                .arg_required_else_help(true)
+                .arg(arg!(<task> "Task to run"))
+                .arg(arg!([args] "Additional arguments").raw(true))
+                .arg_required_else_help(true),
         )
 }
 

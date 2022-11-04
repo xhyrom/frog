@@ -1,8 +1,8 @@
 use std::{collections::HashMap, env, io::Result};
 
-use clap::{ArgMatches};
-use frog_core::{eval, config};
-use frog_logger::{error, log, colors};
+use clap::ArgMatches;
+use frog_core::{config, eval};
+use frog_logger::{colors, error, log};
 
 fn run_task(config_path: String, task: String, args: &Vec<String>) -> Result<()> {
     let run = eval::run(config_path, HashMap::new());
@@ -12,12 +12,7 @@ fn run_task(config_path: String, task: String, args: &Vec<String>) -> Result<()>
 
     let run = run.unwrap();
 
-
-    eval::run_task(
-        run,
-        task.to_owned(), 
-        args.to_owned(), 
-    )
+    eval::run_task(run, task.to_owned(), args.to_owned())
 }
 
 pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
@@ -31,14 +26,19 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         task = matches.get_one::<String>("task").unwrap().to_string();
 
         if matches.try_contains_id("args").unwrap() {
-            args = matches.get_many::<String>("args").unwrap().map(|x| x.to_string()).collect::<Vec<String>>();
+            args = matches
+                .get_many::<String>("args")
+                .unwrap()
+                .map(|x| x.to_string())
+                .collect::<Vec<String>>();
         }
     }
 
     log!(
         format!("{}[{}]{} info", colors::GRAY, "main", colors::GREEN).as_str(),
         colors::RED,
-        "Running task {}", task
+        "Running task {}",
+        task
     );
 
     let config_path = env::current_dir();
@@ -54,14 +54,16 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         log!(
             format!("{}[{}]{} error", colors::GRAY, "main", colors::RED).as_str(),
             colors::RED,
-            "{}", main_run.err().unwrap()
+            "{}",
+            main_run.err().unwrap()
         )
     }
 
     log!(
         format!("{}[{}]{} info", colors::GRAY, "main", colors::GREEN).as_str(),
         colors::RED,
-        "Task {} completed", task
+        "Task {} completed",
+        task
     );
 
     for workspace in config::get_workspaces().iter() {
@@ -71,7 +73,8 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         log!(
             format!("{}[{}]{} info", colors::GRAY, workspace, colors::GREEN).as_str(),
             colors::RED,
-            "Running task {}", task
+            "Running task {}",
+            task
         );
 
         let x_task = run_task(path, task.to_string(), &args);
@@ -79,7 +82,8 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
             log!(
                 format!("{}[{}]{} error", colors::GRAY, workspace, colors::RED).as_str(),
                 colors::RED,
-                "{}", x_task.err().unwrap()
+                "{}",
+                x_task.err().unwrap()
             );
             continue;
         }
@@ -87,7 +91,8 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
         log!(
             format!("{}[{}]{} info", colors::GRAY, workspace, colors::GREEN).as_str(),
             colors::RED,
-            "Task {} completed", task
+            "Task {} completed",
+            task
         );
     }
 

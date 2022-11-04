@@ -1,5 +1,14 @@
-use std::{cell::RefCell, rc::Rc, io::{Error, ErrorKind, Result}, collections::HashMap};
-use lang::{evaluator::{Evaluator, env::Env, builtins::new_builtins, object::Object}, parser::{Parser}, lexer::{Lexer}};
+use lang::{
+    evaluator::{builtins::new_builtins, env::Env, object::Object, Evaluator},
+    lexer::Lexer,
+    parser::Parser,
+};
+use std::{
+    cell::RefCell,
+    collections::HashMap,
+    io::{Error, ErrorKind, Result},
+    rc::Rc,
+};
 
 use crate::config;
 
@@ -19,15 +28,22 @@ pub fn run(config_path: String, custom_builtins: HashMap<String, Object>) -> Res
     if runner.is_err() {
         return Err(Error::new(ErrorKind::Other, runner.err().unwrap()));
     }
-    
+
     Ok(evaluator)
 }
 
 pub fn run_task(mut evaluator: Evaluator, name: String, args: Vec<String>) -> Result<()> {
     let run_task = run_line(
         &mut evaluator,
-        format!("{}({})", name, args.iter().map(|x| format!("\"{}\"", x)).collect::<Vec<String>>().join(", "))
-    ); 
+        format!(
+            "{}({})",
+            name,
+            args.iter()
+                .map(|x| format!("\"{}\"", x))
+                .collect::<Vec<String>>()
+                .join(", ")
+        ),
+    );
 
     if run_task.is_err() {
         return Err(Error::new(ErrorKind::Other, run_task.err().unwrap()));

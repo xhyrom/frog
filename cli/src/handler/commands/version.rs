@@ -1,4 +1,4 @@
-use std::{env};
+use std::env;
 
 pub fn handle() -> () {
     #[cfg(debug_assertions)]
