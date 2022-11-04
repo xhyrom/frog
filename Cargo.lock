@@ -178,6 +178,7 @@ name = "frog_core"
 version = "0.1.0"
 dependencies = [
  "lang",
+ "lazy_static",
 ]
 
 [[package]]
@@ -241,6 +242,11 @@ version = "0.1.0"
 dependencies = [
  "frog_logger",
 ]
+
+[[package]]
+name = "lazy_static"
+version = "1.5.0"
+source = "git+https://github.com/rust-lang-nursery/lazy-static.rs?branch=master#e83d66490775eb953807c39d1f073a6daa3bc760"
 
 [[package]]
 name = "libc"

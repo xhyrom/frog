@@ -1,4 +1,24 @@
-use std::{fs, io::{Error, ErrorKind}, path::Path};
+use std::{fs, io::{Error, ErrorKind}, path::Path, sync::{Mutex, MutexGuard}};
+
+use lazy_static::lazy_static;
+
+lazy_static! {
+    static ref Workspaces: Mutex<Vec<String>> = {
+        Mutex::new(Vec::new())
+    };
+}
+
+pub fn register_workspace(name: String) {
+    if Workspaces.lock().unwrap().contains(&name) {
+        return;
+    };
+
+    Workspaces.lock().unwrap().push(name);
+}
+
+pub fn get_workspaces() -> MutexGuard<'static, Vec<std::string::String>> {
+    Workspaces.lock().unwrap()
+}
 
 pub fn find(path: String) -> std::io::Result<String> {
     let mut previous = String::new();

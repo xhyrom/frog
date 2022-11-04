@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 lang = { path = "../lang" }
+lazy_static = { git = "https://github.com/rust-lang-nursery/lazy-static.rs", branch = "master" }

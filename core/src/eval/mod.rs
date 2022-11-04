@@ -3,7 +3,9 @@ use lang::{evaluator::{Evaluator, env::Env, builtins::new_builtins, object::Obje
 
 use crate::config;
 
-pub fn run_task(name: String, config_path: String, args: Vec<String>, custom_builtins: HashMap<String, Object>) -> Result<()> {
+pub mod builtins;
+
+pub fn run(config_path: String, custom_builtins: HashMap<String, Object>) -> Result<Evaluator> {
     let mut evaluator = get_evaluator(custom_builtins);
     let config = config::find(config_path);
 
@@ -17,7 +19,11 @@ pub fn run_task(name: String, config_path: String, args: Vec<String>, custom_bui
     if runner.is_err() {
         return Err(Error::new(ErrorKind::Other, runner.err().unwrap()));
     }
+    
+    Ok(evaluator)
+}
 
+pub fn run_task(mut evaluator: Evaluator, name: String, args: Vec<String>) -> Result<()> {
     let run_task = run_line(
         &mut evaluator,
         format!("{}({})", name, args.iter().map(|x| format!("\"{}\"", x)).collect::<Vec<String>>().join(", "))
@@ -33,6 +39,7 @@ pub fn run_task(name: String, config_path: String, args: Vec<String>, custom_bui
 fn get_evaluator(custom_builtins: HashMap<String, Object>) -> Evaluator {
     let mut builtins = new_builtins();
     builtins.extend(custom_builtins);
+    builtins.extend(builtins::new_builtins());
 
     let env = Env::from(builtins);
     let evaluator = Evaluator::new(Rc::new(RefCell::new(env)));

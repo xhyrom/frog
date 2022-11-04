@@ -1,4 +1,6 @@
-Frog
-------
+Frog is a simple system for your repository, it can be used as build system
 
-⚠️ In huge development
+- In huge development ⚠️
+- Monorepo support
+- Custom language, frog lang
+- CLI

@@ -61,3 +61,12 @@ macro_rules! error {
         }
     };
 }
+
+#[macro_export]
+macro_rules! log {
+    ($prefix:expr, $color:expr, $($message:tt)*) => {
+        {
+            $crate::FrogLogger::log($prefix, $color, format!($($message)*).as_str())
+        }
+    };
+}

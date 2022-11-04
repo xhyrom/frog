@@ -14,7 +14,7 @@ pub fn handle(command: Command) -> () {
                 return;
             }
 
-            if matches.try_contains_id("version").is_ok() {
+            if matches.try_contains_id("version").unwrap() {
                 commands::version::handle();
             }
         },
