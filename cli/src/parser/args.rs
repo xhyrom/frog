@@ -8,7 +8,7 @@ pub enum Language {
     Crystal,
     Go,
     Rust,
-    TypeScript,
+    Typescript,
     Other,
 }
 
@@ -18,9 +18,9 @@ impl fmt::Display for Language {
            Language::C => write!(f, "C"),
            Language::Cpp => write!(f, "Cpp"),
            Language::Crystal => write!(f, "Crystal"),
-           Language::Go => write!(f, "go"),
+           Language::Go => write!(f, "Go"),
            Language::Rust => write!(f, "Rust"),
-           Language::TypeScript => write!(f, "TypeScript"),
+           Language::Typescript => write!(f, "TypeScript"),
            Language::Other => write!(f, "Other"),
        }
     }

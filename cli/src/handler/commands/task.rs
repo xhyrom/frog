@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, env};
 
 use clap::ArgMatches;
 use frog_core::{eval};
@@ -14,16 +14,27 @@ pub fn handle(matches: &ArgMatches, fallback: bool) -> () {
     } else {
         task = matches.get_one::<String>("task").unwrap().to_string();
 
-        if let Ok(d) = matches.try_contains_id("args") {
-            if d == true {
-                args = matches.get_many::<String>("args").unwrap().map(|x| x.to_string()).collect::<Vec<String>>();
-            }
+        if matches.try_contains_id("args").is_ok() {
+            args = matches.get_many::<String>("args").unwrap().map(|x| x.to_string()).collect::<Vec<String>>();
         }
     }
 
     info!("Running task {}", task);
 
-    let run = eval::run_task(task.to_owned(), ".".to_string(), args, HashMap::new());
+    let config_path = env::current_dir();
+    if config_path.is_err() {
+        error!("Failed to get current directory");
+        return;
+    }
+
+    let config_path = config_path.unwrap().to_str().unwrap().to_string();
+
+    let run = eval::run_task(
+        task.to_owned(), 
+        config_path, 
+        args, 
+        HashMap::new()
+    );
     if run.is_err() {
         error!("{}", run.err().unwrap());
         return;

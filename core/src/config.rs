@@ -1,18 +1,34 @@
-use std::{fs, io::{Error, ErrorKind}};
+use std::{fs, io::{Error, ErrorKind}, path::Path};
 
 pub fn find(path: String) -> std::io::Result<String> {
-    for entry in fs::read_dir(path)? {
-        let entry = entry?;
-        let path = entry.path();
-        let path_string = path.to_str().unwrap().to_string();
+    let mut previous = String::new();
+    let mut current = path;
 
-        if path_string.contains("uwu.frog") {
-            let content = fs::read_to_string(path)?;
-            drop(path_string);
+    while current != previous {
+        for entry in fs::read_dir(&current)? {
+            let entry = entry?;
+            let path = entry.path();
 
-            return Ok(content);
+            if path.to_str().unwrap().to_string().ends_with(".frog") {
+                let content = fs::read_to_string(path)?;
+                drop(previous);
+                drop(current);
+
+                return Ok(content);
+            }
+        }
+
+        previous = current.clone();
+
+        if let Some(parent) = Path::new(&current).parent() {
+            current = parent.to_str().unwrap().to_string();
+        } else {
+            break;
         }
     }
+
+    drop(previous);
+    drop(current);
 
     Err(Error::new(ErrorKind::NotFound, "uwu.frog not found"))
 }

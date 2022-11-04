@@ -11,9 +11,10 @@ pub fn handle(command: Command) -> () {
         _ => {
             if matches.subcommand_name().is_some() {
                 commands::task::handle(&matches, true);
+                return;
             }
 
-            if matches.contains_id("version") {
+            if matches.try_contains_id("version").is_ok() {
                 commands::version::handle();
             }
         },
