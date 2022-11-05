@@ -1,3 +1,13 @@
-let test = { "halo": [1, 2] };
+import "module";
 
-print(test.halo);
+print(ahoj("hyro"));
+
+let fibo = fibo(50);
+
+if (fibo > 50.0) {
+    print("Fibonacci number is greater than 50");
+} else {
+    print("Fibonacci number is less than 50");
+}
+
+print(fibo);

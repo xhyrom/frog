@@ -211,13 +211,16 @@ impl Evaluator {
         }
 
         let methods = methods.unwrap();
+        let mut map = HashMap::new();
 
         for method in methods {
-            self.env.borrow_mut().set(
-                format!("{}_{}", path.replace("frog::", ""), method.0),
-                method.1
-            );
+            map.insert(Object::String(method.0.to_owned()), method.1.to_owned());
         }
+
+        self.env.borrow_mut().set(
+            path.replace("frog::", ""),
+            &Object::Hash(map)
+        );
 
         None
     }

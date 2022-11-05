@@ -1,3 +1,0 @@
-fun ahoj(name) {
-    return "ahooojky " + name;
-}

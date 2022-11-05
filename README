@@ -12,4 +12,4 @@ Frog is an extremely simple language based on the monkey language
     - len - Get string length
     - print - Print to console
     - typeof - Get type of ident
-    - math_sqrt, math_pow, math_floor - Math functions
+    - math.sqrt, math.pow, math.floor - Math functions inside `frog::math`
