@@ -23,19 +23,20 @@ fn frog_math_sqrt(args: Vec<Object>) -> Object {
 }
 
 fn frog_math_pow(args: Vec<Object>) -> Object {
+    #![allow(unused_assignments)]
     let mut num: f64 = 0.0;
     let mut exp: f64 = 0.0;
 
     match &args[0] {
         Object::Float(i) => num = *i,
         Object::Int(i) => num = *i as f64,
-        _ => (),
+        o => return Object::Error(format!("argument to `math_pow` not supported, got {}", o)),
     }
 
     match &args[1] {
         Object::Float(i) => exp = *i,
         Object::Int(i) => exp = *i as f64,
-        _ => (),
+        o => return Object::Error(format!("argument to `math_pow` not supported, got {}", o)),
     }
 
     Object::Float(num.powf(exp))
@@ -49,6 +50,6 @@ fn frog_math_floor(args: Vec<Object>) -> Object {
         Object::Float(i) => Object::Float(
             (*i).floor()
         ),
-        o => Object::Error(format!("argument to `math_sqrt` not supported, got {}", o)),
+        o => Object::Error(format!("argument to `math_floor` not supported, got {}", o)),
     }
 }
