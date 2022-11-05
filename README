@@ -1,4 +1,4 @@
-Frog is extremely simple language based on Monkey language
+Frog is an extremely simple language based on the monkey language
 
 - I used an implementation of monkeylang in rs by @wadackel under MIT
   - https://github.com/wadackel/rs-monkey-lang
@@ -6,4 +6,8 @@ Frog is extremely simple language based on Monkey language
 - Implementations:
   - user-specified functions using keyword `fun X() {  }`
   - string, int, float, bool, char, arrray, hashmaps (data types)
-  - len, print, typeof (built-in functions)
+  - Functions:
+    - len - Get string length
+    - print - Print to console
+    - typeof - Get type of ident
+    - math_sqrt, math_pow, math_floor - Math functions
