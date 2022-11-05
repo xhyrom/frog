@@ -8,27 +8,27 @@ use frog_logger::error;
 pub fn handle(matches: &ArgMatches) {
     let file = matches.get_one::<String>("file").unwrap();
 
-    let file = fs::read_to_string(file);
-    if file.is_err() {
+    let file_content = fs::read_to_string(file);
+    if file_content.is_err() {
         error!("File not found");
         return;
     }
 
-    let file = file.unwrap();
+    let file_content = file_content.unwrap();
 
-    let mut evaluator = get_evaluator();
-    let runner = run_line(&mut evaluator, file);
+    let mut evaluator = get_evaluator(file);
+    let runner = run_line(&mut evaluator, file_content);
 
     if runner.is_err() {
         error!("{}", runner.err().unwrap());
     }
 }
 
-fn get_evaluator() -> Evaluator {
+fn get_evaluator(file: &String) -> Evaluator {
     let builtins = new_builtins();
 
     let env = Env::from(builtins);
-    let evaluator = Evaluator::new(Rc::new(RefCell::new(env)));
+    let evaluator = Evaluator::new(Rc::new(RefCell::new(env)), file.to_owned());
 
     evaluator
 }

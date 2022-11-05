@@ -17,11 +17,12 @@ use self::object::*;
 #[derive(Debug)]
 pub struct Evaluator {
     env: Rc<RefCell<Env>>,
+    path: String,
 }
 
 impl Evaluator {
-    pub fn new(env: Rc<RefCell<Env>>) -> Self {
-        Evaluator { env }
+    pub fn new(env: Rc<RefCell<Env>>, path: String) -> Self {
+        Evaluator { env, path }
     }
 
     fn is_truthy(obj: Object) -> bool {
@@ -100,6 +101,10 @@ impl Evaluator {
                     Object::String(mut path) => {
                         path.push_str(".frog");
 
+                        if self.path.eq(&path) {
+                            return Some(Self::error(format!("Circular imports are not allowed, tried to import {}", path)));
+                        };
+
                         let file = fs::read_to_string(&path);
                         if file.is_err() {
                             return Some(Self::error(format!("Failed to import {}", path)));
@@ -116,8 +121,9 @@ impl Evaluator {
                                 return Some(Self::error(format!("{}", err)));
                             }
                         };
-                    
+
                         if let Some(evaluated) = self.eval(program) {
+
                             match evaluated {
                                 Object::Error(err) => return Some(Self::error(format!("{}", err))),
                                 _ => println!("{}", evaluated),
