@@ -1,4 +1,5 @@
-pub mod builtins;
+pub mod builtins_functions;
+pub mod builtins_modules;
 pub mod env;
 pub mod object;
 
@@ -19,12 +20,13 @@ use self::object::*;
 #[derive(Debug)]
 pub struct Evaluator {
     env: Rc<RefCell<Env>>,
+    builtin_modules: HashMap<String, HashMap<String, Object>>,
     path: PathBuf,
 }
 
 impl Evaluator {
     pub fn new(env: Rc<RefCell<Env>>, path: String) -> Self {
-        Evaluator { env, path: Path::new(&path).to_path_buf() }
+        Evaluator { env, builtin_modules: builtins_modules::new_builtins(), path: Path::new(&path).to_path_buf() }
     }
 
     fn is_truthy(obj: Object) -> bool {
@@ -93,54 +95,7 @@ impl Evaluator {
                     None
                 }
             }
-            Stmt::Import(expr) => {
-                let value = match self.eval_expr(expr) {
-                    Some(value) => value,
-                    None => return None,
-                };
-                
-                match value {
-                    Object::String(mut path) => {
-                        if let Some(parent) = self.path.parent() {
-                            path = parent.join(path).to_str().unwrap().to_owned();
-                        }
-
-                        path.push_str(".frog");
-
-                        if self.path.to_str().unwrap().eq(&path) {
-                            return Some(Self::error(format!("Circular imports are not allowed, tried to import {}", path)));
-                        };
-
-                        let file = fs::read_to_string(&path);
-                        if file.is_err() {
-                            return Some(Self::error(format!("Failed to import {}", path)));
-                        }
-                    
-                        let file = file.unwrap();
-
-                        let mut parser = Parser::new(Lexer::new(&file));
-                        let program = parser.parse();
-                        let errors = parser.get_errors();
-                    
-                        if errors.len() > 0 {
-                            for err in errors {
-                                return Some(Self::error(format!("{}", err)));
-                            }
-                        };
-
-                        if let Some(evaluated) = self.eval(program) {
-
-                            match evaluated {
-                                Object::Error(err) => return Some(Self::error(format!("{}", err))),
-                                _ => println!("{}", evaluated),
-                            }
-                        }
-                    }
-                    _ => return Some(Self::error(format!("{} is not a string", value))),
-                };
-
-                None
-            }
+            Stmt::Import(expr) => self.eval_import(expr),
             Stmt::Expr(expr) => self.eval_expr(expr),
             Stmt::Return(expr) => {
                 let value = match self.eval_expr(expr) {
@@ -195,6 +150,76 @@ impl Evaluator {
             Expr::Func { name, params, body } => Some(self.eval_func_expr(name, params, body)),
             Expr::Call { func, args } => Some(self.eval_call_expr(func, args)),
         }
+    }
+
+    fn eval_import(&mut self, expr: Expr) -> Option<Object> {
+        let value = match self.eval_expr(expr) {
+            Some(value) => value,
+            None => return None,
+        };
+        
+        match value {
+            Object::String(mut path) => {
+                if path.starts_with("frog::") {
+                    return self.eval_import_builtin(path);
+                }
+
+                if let Some(parent) = self.path.parent() {
+                    path = parent.join(path).to_str().unwrap().to_owned();
+                }
+
+                path.push_str(".frog");
+
+                if self.path.to_str().unwrap().eq(&path) {
+                    return Some(Self::error(format!("Circular imports are not allowed, tried to import {}", path)));
+                };
+
+                let file = fs::read_to_string(&path);
+                if file.is_err() {
+                    return Some(Self::error(format!("Failed to import {}", path)));
+                }
+            
+                let file = file.unwrap();
+
+                let mut parser = Parser::new(Lexer::new(&file));
+                let program = parser.parse();
+                let errors = parser.get_errors();
+            
+                if errors.len() > 0 {
+                    for err in errors {
+                        return Some(Self::error(format!("{}", err)));
+                    }
+                };
+
+                if let Some(evaluated) = self.eval(program) {
+                    match evaluated {
+                        Object::Error(err) => return Some(Self::error(format!("{}", err))),
+                        _ => println!("{}", evaluated),
+                    }
+                }
+            }
+            _ => return Some(Self::error(format!("{} is not a string", value))),
+        };
+
+        None
+    }
+
+    fn eval_import_builtin(&mut self, path: String) -> Option<Object> {
+        let methods = self.builtin_modules.get(&path);
+        if methods.is_none() {
+            return Some(Object::Error(format!("{} is not a builtin module", path)));
+        }
+
+        let methods = methods.unwrap();
+
+        for method in methods {
+            self.env.borrow_mut().set(
+                format!("{}_{}", path.replace("frog::", ""), method.0),
+                method.1
+            );
+        }
+
+        None
     }
 
     fn eval_ident(&mut self, ident: Ident) -> Object {

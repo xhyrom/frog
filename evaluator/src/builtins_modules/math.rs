@@ -4,13 +4,13 @@ use crate::object::Object;
 
 pub fn new() -> HashMap<String, Object> {
     let mut builtins = HashMap::new();
-    builtins.insert(String::from("math_sqrt"), Object::Builtin(1, frog_math_sqrt));
-    builtins.insert(String::from("math_pow"), Object::Builtin(2, frog_math_pow));
-    builtins.insert(String::from("math_floor"), Object::Builtin(1, frog_math_floor));
+    builtins.insert(String::from("sqrt"), Object::Builtin(1, frog_sqrt));
+    builtins.insert(String::from("pow"), Object::Builtin(2, frog_pow));
+    builtins.insert(String::from("floor"), Object::Builtin(1, frog_floor));
     builtins
 }
 
-fn frog_math_sqrt(args: Vec<Object>) -> Object {
+fn frog_sqrt(args: Vec<Object>) -> Object {
     match &args[0] {
         Object::Int(i) => Object::Float(
             (*i as f64).sqrt()
@@ -22,7 +22,7 @@ fn frog_math_sqrt(args: Vec<Object>) -> Object {
     }
 }
 
-fn frog_math_pow(args: Vec<Object>) -> Object {
+fn frog_pow(args: Vec<Object>) -> Object {
     #![allow(unused_assignments)]
     let mut num: f64 = 0.0;
     let mut exp: f64 = 0.0;
@@ -42,7 +42,7 @@ fn frog_math_pow(args: Vec<Object>) -> Object {
     Object::Float(num.powf(exp))
 }
 
-fn frog_math_floor(args: Vec<Object>) -> Object {
+fn frog_floor(args: Vec<Object>) -> Object {
     match &args[0] {
         Object::Int(i) => Object::Float(
             (*i as f64).floor()

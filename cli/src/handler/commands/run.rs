@@ -2,7 +2,7 @@ use std::{cell::RefCell, rc::Rc, io::{Result, ErrorKind, Error}, fs};
 
 use clap::ArgMatches;
 use frog_lang::{parser::Parser, lexer::Lexer};
-use frog_lang_evaluator::{Evaluator, builtins::new_builtins, env::Env, object::Object};
+use frog_lang_evaluator::{Evaluator, builtins_functions::new_builtins, env::Env, object::Object};
 use frog_logger::error;
 
 pub fn handle(matches: &ArgMatches) {

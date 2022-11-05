@@ -1,3 +1,4 @@
+import "frog::math";
 import "ahoj";
 
 print(ahoj("hyro"));

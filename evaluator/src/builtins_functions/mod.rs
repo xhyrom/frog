@@ -2,14 +2,11 @@ use std::collections::HashMap;
 
 use super::object::Object;
 
-pub mod math;
-
 pub fn new_builtins() -> HashMap<String, Object> {
     let mut builtins = HashMap::new();
     builtins.insert(String::from("len"), Object::Builtin(1, frog_len));
     builtins.insert(String::from("print"), Object::Builtin(-1, frog_print));
     builtins.insert(String::from("typeof"), Object::Builtin(1, frog_typeof));
-    builtins.extend(math::new());
     builtins
 }
 
