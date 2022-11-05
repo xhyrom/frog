@@ -5,4 +5,12 @@ fun test(n) {
     return math_floor(asymp);
 }
 
-print(test(300));
+let fibo = test(50);
+
+if (fibo > 50.0) {
+    print("Fibonacci number is greater than 50");
+} else {
+    print("Fibonacci number is less than 50");
+}
+
+print(fibo);

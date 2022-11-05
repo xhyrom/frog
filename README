@@ -1,4 +1,4 @@
-Frog lang is extremely simple language based on Monkey language
+Frog is extremely simple language based on Monkey language
 
 - I used an implementation of monkeylang in rs by @wadackel under MIT
   - https://github.com/wadackel/rs-monkey-lang

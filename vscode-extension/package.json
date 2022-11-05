@@ -1,0 +1,26 @@
+{
+  "name": "frog-lang",
+  "displayName": "Frog Lang",
+  "description": "Frog is extremely simple language based on Monkey language",
+  "version": "0.0.1",
+  "publisher": "xHyroM",
+  "engines": {
+    "vscode": "^1.73.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "froglang",
+      "aliases": ["Frog Lang", "froglang"],
+      "extensions": [".frog"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "froglang",
+      "scopeName": "source.frog",
+      "path": "./syntaxes/froglang.tmLanguage.json"
+    }]
+  }
+}

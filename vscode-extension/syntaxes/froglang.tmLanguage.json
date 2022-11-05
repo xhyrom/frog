@@ -1,0 +1,128 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "froglang",
+	"patterns": [
+		{
+			"include": "#code"
+		}
+	],
+	"repository": {
+		"code": {
+			"patterns": [
+				{
+					"include": "#keywords"
+				},
+				{
+					"include": "#strings"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#constants"
+				},
+				{
+					"include": "#numeric"
+				},
+				{
+					"include": "#function"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.froglang",
+					"match": "\\b(fun|let|if|else|return)\\b"
+				},
+				{
+					"name": "keyword.operator.assignment.froglang",
+					"match": "(\\+\\=|-\\=|\\*\\=|/\\=|%=|&=|\\|=|\\^=|<<=|>>=|\\=)"
+				},
+				{
+					"name": "keyword.operator.arithmetic.froglang",
+					"match": "(\\+|\\-|\\*|\\/|(\\b/\\b)|%|&|\\||\\^|<<|>>)"
+				},
+				{
+					"name": "keyword.operator.comparison.froglang",
+					"match": "(<\\=|>\\=|\\=\\=|<|>|\\!\\=)"
+				}	  
+			]
+		},
+		"strings": {
+			"patterns": [
+				{
+					"name": "string.quoted.double.froglang",
+					"begin": "\"",
+					"end": "\"",
+					"patterns": [
+						{
+							"match": "\\\\.",
+							"name": "constant.character.escape.froglang"
+						}
+					]
+				},
+				{
+					"name": "string.quoted.single.froglang",
+					"begin": "'",
+					"end": "'",
+					"patterns": [
+						{
+							"match": "\\\\.",
+							"name": "constant.character.escape.froglang"
+						}
+					]
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+			  {
+				"name": "comment.line.froglang",
+				"begin": "//",
+				"end": "$"
+			  }
+			]
+		},
+		"constants": {
+			"patterns": [
+			  {
+				"name": "constant.language.froglang",
+				"match": "\\b(null|true|false)\\b"
+			  }
+			]
+		},
+		"numeric": {
+			"patterns": [
+			  {
+				"name": "constant.numeric.decimal.froglang",
+				"match": "\\b[0-9]([0-9]|\\.)*\\b"
+			  }
+			]
+		},
+		"function": {
+			"begin": "([A-Za-z_$][\\w$]*)\\s*(\\()",
+			"beginCaptures": {
+				"1": {
+					"name": "entity.name.function.froglang"
+				},
+				"2": {
+					"name": "punctuation.definition.parameters.begin.bracket.round.froglang"
+				}
+			},
+			"end": "\\)",
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.parameters.end.bracket.round.froglang"
+				}
+			},
+			"name": "meta.function-call.froglang",
+			"patterns": [
+				{
+					"include": "#code"
+				}
+			]
+		}
+	},
+	"scopeName": "source.frog"
+}
