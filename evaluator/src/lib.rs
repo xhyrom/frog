@@ -46,7 +46,6 @@ impl Evaluator {
             }
 
             match self.eval_stmt(stmt) {
-                Some(Object::ReturnValue(value)) => return Some(*value),
                 Some(Object::Error(msg)) => return Some(Object::Error(msg)),
                 _ => (),
             }
@@ -118,10 +117,9 @@ impl Evaluator {
             Expr::Infix(infix, left_expr, right_expr) => {
                 let left = self.eval_expr(*left_expr);
                 let right = self.eval_expr(*right_expr);
+
                 if left.is_some() && right.is_some() {
-                    let temp = self.eval_infix_expr(infix, left.unwrap(), right.unwrap());
-                    //println!("{:?}", temp);
-                    Some(temp)
+                    Some(self.eval_infix_expr(infix, left.unwrap(), right.unwrap()))
                 } else {
                     None
                 }

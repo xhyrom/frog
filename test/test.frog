@@ -7,7 +7,7 @@ fun test(n) {
 
 let fibo = test(50);
 
-if (fibo > 50.0) {
+if (fibo > 50) {
     print("Fibonacci number is greater than 50");
 } else {
     print("Fibonacci number is less than 50");
