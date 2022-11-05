@@ -1,0 +1,8 @@
+fun test(n) {
+    let phi = (1.0 + math_sqrt(5))/2.0;
+    let asymp = math_pow(phi, n) / math_sqrt(5);
+
+    return math_floor(asymp);
+}
+
+print(test(300));

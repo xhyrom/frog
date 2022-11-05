@@ -1,6 +1,0 @@
-Core for Frog CLI
-
-- Implementations:
-  - FrogCore::init
-  - eval::run & eval::run_task
-  - register_workspace (built-in function in frog lang)

@@ -169,16 +169,23 @@ name = "frog"
 version = "0.1.0"
 dependencies = [
  "clap",
- "frog_core",
+ "frog_lang",
+ "frog_lang_evaluator",
  "frog_logger",
 ]
 
 [[package]]
-name = "frog_core"
+name = "frog_lang"
 version = "0.1.0"
 dependencies = [
- "lang",
- "lazy_static",
+ "frog_logger",
+]
+
+[[package]]
+name = "frog_lang_evaluator"
+version = "0.1.0"
+dependencies = [
+ "frog_lang",
 ]
 
 [[package]]
@@ -235,18 +242,6 @@ checksum = "49409df3e3bf0856b916e2ceaca09ee28e6871cf7d9ce97a692cacfdb2a25a47"
 dependencies = [
  "wasm-bindgen",
 ]
-
-[[package]]
-name = "lang"
-version = "0.1.0"
-dependencies = [
- "frog_logger",
-]
-
-[[package]]
-name = "lazy_static"
-version = "1.5.0"
-source = "git+https://github.com/rust-lang-nursery/lazy-static.rs?branch=master#e83d66490775eb953807c39d1f073a6daa3bc760"
 
 [[package]]
 name = "libc"

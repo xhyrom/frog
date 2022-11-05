@@ -1,10 +1,9 @@
 [package]
-name = "frog_core"
+name = "frog_lang"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-lang = { path = "../lang" }
-lazy_static = { git = "https://github.com/rust-lang-nursery/lazy-static.rs", branch = "master" }
+frog_logger = { path = "../logger" }

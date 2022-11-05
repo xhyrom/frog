@@ -2,7 +2,7 @@
 
 members = [
     "cli",
-    "core",
-    "logger",
-    "lang"
+    "frog",
+    "evaluator",
+    "logger"
 ]

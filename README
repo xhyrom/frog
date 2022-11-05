@@ -1,6 +1,9 @@
-Frog is a simple system for your repository, it can be used as build system
+Frog lang is extremely simple language based on Monkey language
 
-- In huge development ⚠️
-- Monorepo support
-- Custom language, frog lang
-- CLI
+- I used an implementation of monkeylang in rs by @wadackel under MIT
+  - https://github.com/wadackel/rs-monkey-lang
+
+- Implementations:
+  - user-specified functions using keyword `fun X() {  }`
+  - string, int, float, bool, char, arrray, hashmaps (data types)
+  - len, print, typeof (built-in functions)

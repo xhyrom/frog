@@ -8,5 +8,6 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.0.18", features = ["derive"] }
-frog_core = { path = "../core" }
 frog_logger = { path = "../logger" }
+frog_lang = { path = "../frog" }
+frog_lang_evaluator = { path = "../evaluator" }

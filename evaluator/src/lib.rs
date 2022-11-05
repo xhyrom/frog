@@ -6,7 +6,7 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::ast::*;
+use frog_lang::ast::*;
 
 use self::env::*;
 use self::object::*;
@@ -119,7 +119,9 @@ impl Evaluator {
                 let left = self.eval_expr(*left_expr);
                 let right = self.eval_expr(*right_expr);
                 if left.is_some() && right.is_some() {
-                    Some(self.eval_infix_expr(infix, left.unwrap(), right.unwrap()))
+                    let temp = self.eval_infix_expr(infix, left.unwrap(), right.unwrap());
+                    //println!("{:?}", temp);
+                    Some(temp)
                 } else {
                     None
                 }
@@ -171,23 +173,45 @@ impl Evaluator {
 
     fn eval_minus_prefix_op_expr(&mut self, right: Object) -> Object {
         match right {
+            Object::ReturnValue(value) => {
+                self.eval_minus_prefix_op_expr(*value)
+            },
             Object::Int(value) => Object::Int(-value),
+            Object::Float(value) => Object::Float(-value),
             _ => Self::error(format!("unknown operator: -{}", right)),
         }
     }
 
     fn eval_plus_prefix_op_expr(&mut self, right: Object) -> Object {
         match right {
+            Object::ReturnValue(value) => {
+                self.eval_plus_prefix_op_expr(*value)
+            },
             Object::Int(value) => Object::Int(value),
+            Object::Float(value) => Object::Float(value),
             _ => Self::error(format!("unknown operator: {}", right)),
         }
     }
 
     fn eval_infix_expr(&mut self, infix: Infix, left: Object, right: Object) -> Object {
         match left {
+            Object::ReturnValue(left_value) => {
+                if let Object::ReturnValue(right_value) = right {
+                    self.eval_infix_expr(infix, *left_value, *right_value)
+                } else {
+                    self.eval_infix_expr(infix, *left_value, right)
+                }
+            },
             Object::Int(left_value) => {
                 if let Object::Int(right_value) = right {
                     self.eval_infix_int_expr(infix, left_value, right_value)
+                } else {
+                    Self::error(format!("type mismatch: {} {} {}", left, infix, right))
+                }
+            }
+            Object::Float(left_value) => {
+                if let Object::Float(right_value) = right {
+                    self.eval_infix_float_expr(infix, left_value, right_value)
                 } else {
                     Self::error(format!("type mismatch: {} {} {}", left, infix, right))
                 }
@@ -252,6 +276,21 @@ impl Evaluator {
         }
     }
 
+    fn eval_infix_float_expr(&mut self, infix: Infix, left: f64, right: f64) -> Object {
+        match infix {
+            Infix::Plus => Object::Float(left + right),
+            Infix::Minus => Object::Float(left - right),
+            Infix::Multiply => Object::Float(left * right),
+            Infix::Divide => Object::Float(left / right),
+            Infix::LessThan => Object::Bool(left < right),
+            Infix::LessThanEqual => Object::Bool(left <= right),
+            Infix::GreaterThan => Object::Bool(left > right),
+            Infix::GreaterThanEqual => Object::Bool(left >= right),
+            Infix::Equal => Object::Bool(left == right),
+            Infix::NotEqual => Object::Bool(left != right),
+        }
+    }
+
     fn eval_infix_string_expr(&mut self, infix: Infix, left: String, right: String) -> Object {
         match infix {
             Infix::Plus => Object::String(format!("{}{}", left, right)),
@@ -265,6 +304,7 @@ impl Evaluator {
     fn eval_literal(&mut self, literal: Literal) -> Object {
         match literal {
             Literal::Int(value) => Object::Int(value),
+            Literal::Float(value) => Object::Float(value),
             Literal::Bool(value) => Object::Bool(value),
             Literal::String(value) => Object::String(value),
             Literal::Char(value) => Object::Char(value),

@@ -2,11 +2,14 @@ use std::collections::HashMap;
 
 use super::object::Object;
 
+pub mod math;
+
 pub fn new_builtins() -> HashMap<String, Object> {
     let mut builtins = HashMap::new();
     builtins.insert(String::from("len"), Object::Builtin(1, frog_len));
     builtins.insert(String::from("print"), Object::Builtin(-1, frog_print));
     builtins.insert(String::from("typeof"), Object::Builtin(1, frog_typeof));
+    builtins.extend(math::new());
     builtins
 }
 
@@ -33,6 +36,7 @@ fn frog_print(args: Vec<Object>) -> Object {
 fn frog_typeof(args: Vec<Object>) -> Object {
     match &args[0] {
         Object::Int(_) => Object::String("int".to_string()),
+        Object::Float(_) => Object::String("float".to_string()),
         Object::String(_) => Object::String("string".to_string()),
         Object::Char(_) => Object::String("char".to_string()),
         Object::Bool(_) => Object::String("bool".to_string()),

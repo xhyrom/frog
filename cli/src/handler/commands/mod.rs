@@ -1,3 +1,3 @@
-pub mod init;
-pub mod task;
 pub mod version;
+pub mod run;
+pub mod compile;

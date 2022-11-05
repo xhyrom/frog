@@ -4,7 +4,7 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
 
-use crate::ast::*;
+use frog_lang::ast::*;
 
 use super::env::Env;
 
@@ -13,6 +13,7 @@ pub type BuiltinFunc = fn(Vec<Object>) -> Object;
 #[derive(PartialEq, Clone, Debug)]
 pub enum Object {
     Int(i64),
+    Float(f64),
     String(String),
     Char(char),
     Bool(bool),
@@ -29,6 +30,7 @@ impl fmt::Display for Object {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             Object::Int(ref value) => write!(f, "{}", value),
+            Object::Float(ref value) => write!(f, "{}", value),
             Object::String(ref value) => write!(f, "{}", value),
             Object::Char(ref value) => write!(f, "{}", value),
             Object::Bool(ref value) => write!(f, "{}", value),

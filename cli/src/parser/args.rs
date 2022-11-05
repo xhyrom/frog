@@ -9,15 +9,15 @@ pub fn command() -> Command {
         .allow_external_subcommands(true)
         .arg(arg!(-v - -version))
         .subcommand(
-            Command::new("init")
-                .about("Initialize a new frog project")
-                .arg(arg!([directory]).default_value("."))
+            Command::new("run")
+                .about("Run a file")
+                .arg(arg!(<file> "File to run"))
+                .arg_required_else_help(true),
         )
         .subcommand(
-            Command::new("task")
-                .about("Run a task")
-                .arg(arg!(<task> "Task to run"))
-                .arg(arg!([args] "Additional arguments").raw(true))
+            Command::new("compile")
+                .about("Compile a file")
+                .arg(arg!(<file> "File to compile"))
                 .arg_required_else_help(true),
         )
 }

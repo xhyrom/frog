@@ -225,6 +225,7 @@ impl<'a> Parser<'a> {
         let mut left = match self.current_token {
             Token::Ident(_) => self.parse_ident_expr(),
             Token::Int(_) => self.parse_int_expr(),
+            Token::Float(_) => self.parse_float_expr(),
             Token::String(_) => self.parse_string_expr(),
             Token::Char(_) => self.parse_char_expr(),
             Token::Bool(_) => self.parse_bool_expr(),
@@ -288,6 +289,13 @@ impl<'a> Parser<'a> {
     fn parse_int_expr(&mut self) -> Option<Expr> {
         match self.current_token {
             Token::Int(ref mut int) => Some(Expr::Literal(Literal::Int(int.clone()))),
+            _ => None,
+        }
+    }
+
+    fn parse_float_expr(&mut self) -> Option<Expr> {
+        match self.current_token {
+            Token::Float(ref mut float) => Some(Expr::Literal(Literal::Float(float.clone()))),
             _ => None,
         }
     }
