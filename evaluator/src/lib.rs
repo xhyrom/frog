@@ -5,6 +5,8 @@ pub mod object;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs;
+use std::path::Path;
+use std::path::PathBuf;
 use std::rc::Rc;
 
 use frog_lang::ast::*;
@@ -17,12 +19,12 @@ use self::object::*;
 #[derive(Debug)]
 pub struct Evaluator {
     env: Rc<RefCell<Env>>,
-    path: String,
+    path: PathBuf,
 }
 
 impl Evaluator {
     pub fn new(env: Rc<RefCell<Env>>, path: String) -> Self {
-        Evaluator { env, path }
+        Evaluator { env, path: Path::new(&path).to_path_buf() }
     }
 
     fn is_truthy(obj: Object) -> bool {
@@ -99,9 +101,13 @@ impl Evaluator {
                 
                 match value {
                     Object::String(mut path) => {
+                        if let Some(parent) = self.path.parent() {
+                            path = parent.join(path).to_str().unwrap().to_owned();
+                        }
+
                         path.push_str(".frog");
 
-                        if self.path.eq(&path) {
+                        if self.path.to_str().unwrap().eq(&path) {
                             return Some(Self::error(format!("Circular imports are not allowed, tried to import {}", path)));
                         };
 
