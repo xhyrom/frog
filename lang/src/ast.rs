@@ -64,10 +64,6 @@ pub enum Expr {
         alternative: Option<BlockStmt>,
     },
     Func {
-        params: Vec<Ident>,
-        body: BlockStmt,
-    },
-    Task {
         name: Ident,
         params: Vec<Ident>,
         body: BlockStmt,
@@ -91,7 +87,7 @@ pub enum Literal {
 #[derive(PartialEq, Clone, Debug)]
 pub enum Stmt {
     Blank,
-    Declare(Ident, Expr),
+    Let(Ident, Expr),
     Return(Expr),
     Expr(Expr),
 }

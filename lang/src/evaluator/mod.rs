@@ -75,7 +75,7 @@ impl Evaluator {
 
     fn eval_stmt(&mut self, stmt: Stmt) -> Option<Object> {
         match stmt {
-            Stmt::Declare(ident, expr) => {
+            Stmt::Let(ident, expr) => {
                 let value = match self.eval_expr(expr) {
                     Some(value) => value,
                     None => return None,
@@ -138,8 +138,7 @@ impl Evaluator {
                 consequence,
                 alternative,
             } => self.eval_if_expr(*cond, consequence, alternative),
-            Expr::Func { params, body } => Some(Object::Func(params, body, Rc::clone(&self.env))),
-            Expr::Task { name, params, body } => Some(self.eval_task_expr(name, params, body)),
+            Expr::Func { name, params, body } => Some(self.eval_func_expr(name, params, body)),
             Expr::Call { func, args } => Some(self.eval_call_expr(func, args)),
         }
     }
@@ -323,12 +322,12 @@ impl Evaluator {
         }
     }
 
-    fn eval_task_expr(&mut self, name: Ident, params: Vec<Ident>, body: BlockStmt) -> Object {
+    fn eval_func_expr(&mut self, name: Ident, params: Vec<Ident>, body: BlockStmt) -> Object {
         let Ident(name) = name;
-        let task = Object::Task(name.to_owned(), params, body, Rc::clone(&self.env));
-        self.env.borrow_mut().set(name, &task);
+        let func = Object::Func(name.to_owned(), params, body, Rc::clone(&self.env));
+        self.env.borrow_mut().set(name, &func);
 
-        task
+        func
     }
 
     fn eval_call_expr(&mut self, func: Box<Expr>, args: Vec<Expr>) -> Object {
@@ -338,8 +337,7 @@ impl Evaluator {
             .collect::<Vec<_>>();
 
         let (params, body, env) = match self.eval_expr(*func) {
-            Some(Object::Func(params, body, env)) => (params, body, env),
-            Some(Object::Task(_, params, body, env)) => (params, body, env),
+            Some(Object::Func(_, params, body, env)) => (params, body, env),
             Some(Object::Builtin(expect_param_num, f)) => {
                 if expect_param_num < 0 || expect_param_num == args.len() as i32 {
                     return f(args);

@@ -18,8 +18,7 @@ pub enum Object {
     Bool(bool),
     Array(Vec<Object>),
     Hash(HashMap<Object, Object>),
-    Func(Vec<Ident>, BlockStmt, Rc<RefCell<Env>>),
-    Task(String, Vec<Ident>, BlockStmt, Rc<RefCell<Env>>),
+    Func(String, Vec<Ident>, BlockStmt, Rc<RefCell<Env>>),
     Builtin(i32, BuiltinFunc),
     Null,
     ReturnValue(Box<Object>),
@@ -55,7 +54,7 @@ impl fmt::Display for Object {
                 }
                 write!(f, "{{{}}}", result)
             }
-            Object::Func(ref params, _, _) => {
+            Object::Func(ref name, ref params, _, _) => {
                 let mut result = String::new();
                 for (i, Ident(ref s)) in params.iter().enumerate() {
                     if i < 1 {
@@ -64,18 +63,7 @@ impl fmt::Display for Object {
                         result.push_str(&format!(", {}", s));
                     }
                 }
-                write!(f, "fn({}) {{ ... }}", result)
-            }
-            Object::Task(ref name, ref params, _, _) => {
-                let mut result = String::new();
-                for (i, Ident(ref s)) in params.iter().enumerate() {
-                    if i < 1 {
-                        result.push_str(&format!("{}", s));
-                    } else {
-                        result.push_str(&format!(", {}", s));
-                    }
-                }
-                write!(f, "task {}({}) {{ ... }}", name, result)
+                write!(f, "fun {}({}) {{ ... }}", name, result)
             }
             Object::Builtin(_, _) => write!(f, "[builtin function]"),
             Object::Null => write!(f, "null"),

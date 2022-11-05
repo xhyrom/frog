@@ -157,14 +157,14 @@ impl<'a> Parser<'a> {
 
     fn parse_stmt(&mut self) -> Option<Stmt> {
         match self.current_token {
-            Token::Declare => self.parse_declare_stmt(),
+            Token::Let => self.parse_let_stmt(),
             Token::Return => self.parse_return_stmt(),
             Token::Blank => Some(Stmt::Blank),
             _ => self.parse_expr_stmt(),
         }
     }
 
-    fn parse_declare_stmt(&mut self) -> Option<Stmt> {
+    fn parse_let_stmt(&mut self) -> Option<Stmt> {
         match &self.next_token {
             Token::Ident(_) => self.bump(),
             _ => return None,
@@ -190,7 +190,7 @@ impl<'a> Parser<'a> {
             self.bump();
         }
 
-        Some(Stmt::Declare(name, expr))
+        Some(Stmt::Let(name, expr))
     }
 
     fn parse_return_stmt(&mut self) -> Option<Stmt> {
@@ -234,7 +234,6 @@ impl<'a> Parser<'a> {
             Token::Lparen => self.parse_grouped_expr(),
             Token::If => self.parse_if_expr(),
             Token::Func => self.parse_func_expr(),
-            Token::Task => self.parse_task_expr(),
             _ => {
                 self.error_no_prefix_parser();
                 return None;
@@ -494,9 +493,17 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_func_expr(&mut self) -> Option<Expr> {
-        if !self.expect_next_token(Token::Lparen) {
-            return None;
-        }
+        match &self.next_token {
+            Token::Ident(_) => self.bump(),
+            _ => return None,
+        };
+
+        let name = match self.parse_ident() {
+            Some(name) => name,
+            None => return None,
+        };
+
+        self.bump();
 
         let params = match self.parse_func_params() {
             Some(params) => params,
@@ -508,6 +515,7 @@ impl<'a> Parser<'a> {
         }
 
         Some(Expr::Func {
+            name,
             params,
             body: self.parse_block_stmt(),
         })
@@ -543,35 +551,6 @@ impl<'a> Parser<'a> {
         }
 
         Some(params)
-    }
-
-    fn parse_task_expr(&mut self) -> Option<Expr> {
-        match &self.next_token {
-            Token::Ident(_) => self.bump(),
-            _ => return None,
-        };
-
-        let name = match self.parse_ident() {
-            Some(name) => name,
-            None => return None,
-        };
-
-        self.bump();
-
-        let params = match self.parse_func_params() {
-            Some(params) => params,
-            None => return None,
-        };
-
-        if !self.expect_next_token(Token::Lbrace) {
-            return None;
-        }
-
-        Some(Expr::Task {
-            name,
-            params,
-            body: self.parse_block_stmt(),
-        })
     }
 
     fn parse_call_expr(&mut self, func: Expr) -> Option<Expr> {

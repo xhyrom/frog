@@ -8,7 +8,7 @@ use std::{
 use lazy_static::lazy_static;
 
 lazy_static! {
-    static ref Workspaces: Mutex<Vec<String>> = { Mutex::new(Vec::new()) };
+    static ref Workspaces: Mutex<Vec<String>> = Mutex::new(Vec::new());
 }
 
 pub fn register_workspace(name: String) {

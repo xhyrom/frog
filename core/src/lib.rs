@@ -6,7 +6,7 @@ pub mod eval;
 pub struct FrogCore;
 
 impl FrogCore {
-    pub fn init(name: String, directory: &String, language: String) -> bool {
+    pub fn init(directory: &String) -> bool {
         if directory != "." {
             match fs::create_dir_all(directory) {
                 Ok(_) => (),
@@ -17,16 +17,9 @@ impl FrogCore {
         let path = Path::new(directory);
 
         let code = String::from(format!(
-            "declare name = \"{}\";
-declare language = \"{}\";
-
-task build() {{
+            "task build() {{
     print(\"Building...\");
-}}",
-            name, language
-        ));
-
-        println!("{}", code);
+}}"));
 
         match fs::write(path.join("uwu.frog"), code) {
             Ok(_) => return true,

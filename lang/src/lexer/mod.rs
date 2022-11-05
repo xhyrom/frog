@@ -151,9 +151,8 @@ impl<'a> Lexer<'a> {
         let literal = &self.input[start_pos..self.pos];
 
         match literal {
-            "fn" => Token::Func,
-            "task" => Token::Task,
-            "declare" => Token::Declare,
+            "fun" => Token::Func,
+            "let" => Token::Let,
             "true" => Token::Bool(true),
             "false" => Token::Bool(false),
             "if" => Token::If,

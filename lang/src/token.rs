@@ -43,7 +43,6 @@ pub enum Token {
 
     // Reseved keywords
     Func,
-    Declare,
-    Task,
+    Let,
     Return,
 }

@@ -1,30 +1,4 @@
-use clap::{arg, value_parser, Command};
-use std::fmt;
-
-#[derive(clap::ValueEnum, Clone)]
-pub enum Language {
-    C,
-    Cpp,
-    Crystal,
-    Go,
-    Rust,
-    Typescript,
-    Other,
-}
-
-impl fmt::Display for Language {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Language::C => write!(f, "C"),
-            Language::Cpp => write!(f, "Cpp"),
-            Language::Crystal => write!(f, "Crystal"),
-            Language::Go => write!(f, "Go"),
-            Language::Rust => write!(f, "Rust"),
-            Language::Typescript => write!(f, "TypeScript"),
-            Language::Other => write!(f, "Other"),
-        }
-    }
-}
+use clap::{arg, Command};
 
 pub fn command() -> Command {
     Command::new("frog")
@@ -37,16 +11,7 @@ pub fn command() -> Command {
         .subcommand(
             Command::new("init")
                 .about("Initialize a new frog project")
-                .arg(
-                    arg!(<language> "Language to use for the project")
-                        .value_parser(value_parser!(Language))
-                        .ignore_case(true),
-                )
-                .args(&[
-                    arg!(--name[name]).default_value("frog_project"),
-                    arg!(--directory[directory]).default_value("."),
-                ])
-                .arg_required_else_help(true),
+                .arg(arg!([directory]).default_value("."))
         )
         .subcommand(
             Command::new("task")

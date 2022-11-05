@@ -1,10 +1,9 @@
 Frog lang is extremely simple language based on Monkey language
 
-- I used a implementation of monkeylang in rs by @wadackel under MIT
+- I used an implementation of monkeylang in rs by @wadackel under MIT
   - https://github.com/wadackel/rs-monkey-lang
 
 - Implementations:
-  - the entire monkey language
-  - tasks (something like fn but with name)
+  - user-specified functions using keyword `fun X() {  }`
   - string, int, bool, char, arrray, hashmaps (data types)
-  - len, print, typeof, bash (built-in functions)
+  - len, print, typeof (built-in functions)
