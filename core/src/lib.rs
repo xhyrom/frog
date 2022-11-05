@@ -17,7 +17,7 @@ impl FrogCore {
         let path = Path::new(directory);
 
         let code = String::from(format!(
-            "task build() {{
+            "fun build() {{
     print(\"Building...\");
 }}"));
 
