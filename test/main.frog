@@ -1,0 +1,3 @@
+let test = { "halo": [1, 2] };
+
+print(test.halo);

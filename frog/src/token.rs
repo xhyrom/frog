@@ -32,6 +32,7 @@ pub enum Token {
     GreaterThanEqual,
 
     // Delimiters
+    Dot,
     Comma,
     Colon,
     Semicolon,

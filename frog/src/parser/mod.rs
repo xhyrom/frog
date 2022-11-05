@@ -64,7 +64,8 @@ impl<'a> Parser<'a> {
             Token::GreaterThan | Token::GreaterThanEqual => Precedence::LessGreater,
             Token::Plus | Token::Minus => Precedence::Sum,
             Token::Slash | Token::Asterisk => Precedence::Product,
-            Token::Lbracket => Precedence::Index,
+            Token::Dot
+            | Token::Lbracket => Precedence::Index,
             Token::Lparen => Precedence::Call,
             _ => Precedence::Lowest,
         }
@@ -253,6 +254,7 @@ impl<'a> Parser<'a> {
             Token::Lbrace => self.parse_hash_expr(),
             Token::Bang | Token::Minus | Token::Plus => self.parse_prefix_expr(),
             Token::Lparen => self.parse_grouped_expr(),
+            Token::Dot => None,
             Token::If => self.parse_if_expr(),
             Token::Func => self.parse_func_expr(),
             _ => {
@@ -277,6 +279,10 @@ impl<'a> Parser<'a> {
                     self.bump();
                     left = self.parse_infix_expr(left.unwrap());
                 }
+                Token::Dot => {
+                    self.bump();
+                    left = self.parse_dot_expr(left.unwrap());
+                },
                 Token::Lbracket => {
                     self.bump();
                     left = self.parse_index_expr(left.unwrap());
@@ -455,6 +461,23 @@ impl<'a> Parser<'a> {
             Some(expr) => Some(Expr::Infix(infix, Box::new(left), Box::new(expr))),
             None => None,
         }
+    }
+
+    fn parse_dot_expr(&mut self, left: Expr) -> Option<Expr> {
+        self.bump();
+
+        let index = match self.current_token {
+            Token::Ident(ref mut s) => Some(Expr::Literal(Literal::String(s.clone()))),
+            _ => return None,
+        };
+
+        if index.is_none() {
+            return None;
+        }
+
+        let index = index.unwrap();
+
+        Some(Expr::Index(Box::new(left), Box::new(index)))
     }
 
     fn parse_index_expr(&mut self, left: Expr) -> Option<Expr> {
