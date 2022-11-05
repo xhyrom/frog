@@ -351,7 +351,9 @@ impl Evaluator {
             None => return None,
         };
 
-        if Self::is_truthy(cond) {
+        if Self::is_error(&cond) {
+            Some(cond)
+        } else if Self::is_truthy(cond) {
             self.eval_block_stmt(consequence)
         } else if let Some(alt) = alternative {
             self.eval_block_stmt(alt)
