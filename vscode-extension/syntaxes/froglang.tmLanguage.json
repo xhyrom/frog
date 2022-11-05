@@ -33,7 +33,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.froglang",
-					"match": "\\b(fun|let|if|else|return)\\b"
+					"match": "\\b(fun|let|if|else|return|import)\\b"
 				},
 				{
 					"name": "keyword.operator.assignment.froglang",

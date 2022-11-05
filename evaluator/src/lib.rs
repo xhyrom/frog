@@ -4,9 +4,12 @@ pub mod object;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::fs;
 use std::rc::Rc;
 
 use frog_lang::ast::*;
+use frog_lang::lexer::Lexer;
+use frog_lang::parser::Parser;
 
 use self::env::*;
 use self::object::*;
@@ -86,6 +89,45 @@ impl Evaluator {
                     self.env.borrow_mut().set(name, &value);
                     None
                 }
+            }
+            Stmt::Import(expr) => {
+                let value = match self.eval_expr(expr) {
+                    Some(value) => value,
+                    None => return None,
+                };
+                
+                match value {
+                    Object::String(mut path) => {
+                        path.push_str(".frog");
+
+                        let file = fs::read_to_string(&path);
+                        if file.is_err() {
+                            return Some(Self::error(format!("Failed to import {}", path)));
+                        }
+                    
+                        let file = file.unwrap();
+
+                        let mut parser = Parser::new(Lexer::new(&file));
+                        let program = parser.parse();
+                        let errors = parser.get_errors();
+                    
+                        if errors.len() > 0 {
+                            for err in errors {
+                                return Some(Self::error(format!("{}", err)));
+                            }
+                        };
+                    
+                        if let Some(evaluated) = self.eval(program) {
+                            match evaluated {
+                                Object::Error(err) => return Some(Self::error(format!("{}", err))),
+                                _ => println!("{}", evaluated),
+                            }
+                        }
+                    }
+                    _ => return Some(Self::error(format!("{} is not a string", value))),
+                };
+
+                None
             }
             Stmt::Expr(expr) => self.eval_expr(expr),
             Stmt::Return(expr) => {

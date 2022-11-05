@@ -157,6 +157,7 @@ impl<'a> Lexer<'a> {
             "false" => Token::Bool(false),
             "if" => Token::If,
             "else" => Token::Else,
+            "import" => Token::Import,
             "return" => Token::Return,
             _ => Token::Ident(String::from(literal)),
         }

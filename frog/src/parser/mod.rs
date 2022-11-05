@@ -158,6 +158,7 @@ impl<'a> Parser<'a> {
     fn parse_stmt(&mut self) -> Option<Stmt> {
         match self.current_token {
             Token::Let => self.parse_let_stmt(),
+            Token::Import => self.parse_import_stmt(),
             Token::Return => self.parse_return_stmt(),
             Token::Blank => Some(Stmt::Blank),
             _ => self.parse_expr_stmt(),
@@ -191,6 +192,25 @@ impl<'a> Parser<'a> {
         }
 
         Some(Stmt::Let(name, expr))
+    }
+
+    fn parse_import_stmt(&mut self) -> Option<Stmt> {
+        match &self.next_token {
+            Token::String(_) => self.bump(),
+            _ => return None,
+        };
+
+        let expr = match self.parse_string_expr() {
+            Some(expr) => expr,
+            None => return None,
+        };
+
+
+        if self.next_token_is(&Token::Semicolon) {
+            self.bump();
+        }
+
+        Some(Stmt::Import(expr))
     }
 
     fn parse_return_stmt(&mut self) -> Option<Stmt> {

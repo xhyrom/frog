@@ -89,6 +89,7 @@ pub enum Literal {
 pub enum Stmt {
     Blank,
     Let(Ident, Expr),
+    Import(Expr),
     Return(Expr),
     Expr(Expr),
 }
