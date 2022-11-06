@@ -29,7 +29,7 @@ impl Evaluator {
         Evaluator {
             env,
             builtin_modules: builtins_modules::new_builtins(),
-            path: Path::new(&path).to_path_buf()
+            path: Path::new(&path).to_path_buf(),
         }
     }
 
@@ -96,7 +96,7 @@ impl Evaluator {
                 } else {
                     let Ident(name) = ident;
                     self.env.borrow_mut().set(name, &value);
-                    
+
                     None
                 }
             }
@@ -162,7 +162,7 @@ impl Evaluator {
             Some(value) => value,
             None => return None,
         };
-        
+
         match value {
             Object::String(mut path) => {
                 if path.starts_with("frog::") {
@@ -178,20 +178,23 @@ impl Evaluator {
                 path.push_str(".frog");
 
                 if self.path.to_str().unwrap().eq(&path) {
-                    return Some(Self::error(format!("Circular imports are not allowed, tried to import {}", path)));
+                    return Some(Self::error(format!(
+                        "Circular imports are not allowed, tried to import {}",
+                        path
+                    )));
                 };
 
                 let file = fs::read_to_string(&path);
                 if file.is_err() {
                     return Some(Self::error(format!("Failed to import {}", path)));
                 }
-            
+
                 let file = file.unwrap();
 
                 let mut parser = Parser::new(Lexer::new(&file));
                 let program = parser.parse();
                 let errors = parser.get_errors();
-            
+
                 if errors.len() > 0 {
                     for err in errors {
                         return Some(Self::error(format!("{}", err)));
@@ -244,10 +247,9 @@ impl Evaluator {
             map.insert(Object::String(method.0.to_owned()), method.1.to_owned());
         }
 
-        self.env.borrow_mut().set(
-            path.replace("frog::", ""),
-            &Object::Hash(map)
-        );
+        self.env
+            .borrow_mut()
+            .set(path.replace("frog::", ""), &Object::Hash(map));
 
         None
     }
@@ -280,9 +282,7 @@ impl Evaluator {
 
     fn eval_minus_prefix_op_expr(&mut self, right: Object) -> Object {
         match right {
-            Object::ReturnValue(value) => {
-                self.eval_minus_prefix_op_expr(*value)
-            },
+            Object::ReturnValue(value) => self.eval_minus_prefix_op_expr(*value),
             Object::Int(value) => Object::Int(-value),
             Object::Float(value) => Object::Float(-value),
             _ => Self::error(format!("unknown operator: -{}", right)),
@@ -291,9 +291,7 @@ impl Evaluator {
 
     fn eval_plus_prefix_op_expr(&mut self, right: Object) -> Object {
         match right {
-            Object::ReturnValue(value) => {
-                self.eval_plus_prefix_op_expr(*value)
-            },
+            Object::ReturnValue(value) => self.eval_plus_prefix_op_expr(*value),
             Object::Int(value) => Object::Int(value),
             Object::Float(value) => Object::Float(value),
             _ => Self::error(format!("unknown operator: {}", right)),
@@ -308,7 +306,7 @@ impl Evaluator {
                 } else {
                     self.eval_infix_expr(infix, *left_value, right)
                 }
-            },
+            }
             Object::Int(left_value) => {
                 if let Object::Int(right_value) = right {
                     self.eval_infix_int_expr(infix, left_value, right_value)

@@ -64,8 +64,7 @@ impl<'a> Parser<'a> {
             Token::GreaterThan | Token::GreaterThanEqual => Precedence::LessGreater,
             Token::Plus | Token::Minus => Precedence::Sum,
             Token::Slash | Token::Asterisk => Precedence::Product,
-            Token::Dot
-            | Token::Lbracket => Precedence::Index,
+            Token::Dot | Token::Lbracket => Precedence::Index,
             Token::Lparen => Precedence::Call,
             _ => Precedence::Lowest,
         }
@@ -206,7 +205,6 @@ impl<'a> Parser<'a> {
             None => return None,
         };
 
-
         if self.next_token_is(&Token::Semicolon) {
             self.bump();
         }
@@ -282,7 +280,7 @@ impl<'a> Parser<'a> {
                 Token::Dot => {
                     self.bump();
                     left = self.parse_dot_expr(left.unwrap());
-                },
+                }
                 Token::Lbracket => {
                     self.bump();
                     left = self.parse_index_expr(left.unwrap());

@@ -12,12 +12,8 @@ pub fn new() -> HashMap<String, Object> {
 
 fn frog_sqrt(args: Vec<Object>) -> Object {
     match &args[0] {
-        Object::Int(i) => Object::Float(
-            (*i as f64).sqrt()
-        ),
-        Object::Float(i) => Object::Float(
-            (*i).sqrt()
-        ),
+        Object::Int(i) => Object::Float((*i as f64).sqrt()),
+        Object::Float(i) => Object::Float((*i).sqrt()),
         o => Object::Error(format!("argument to `math_sqrt` not supported, got {}", o)),
     }
 }
@@ -44,12 +40,8 @@ fn frog_pow(args: Vec<Object>) -> Object {
 
 fn frog_floor(args: Vec<Object>) -> Object {
     match &args[0] {
-        Object::Int(i) => Object::Float(
-            (*i as f64).floor()
-        ),
-        Object::Float(i) => Object::Float(
-            (*i).floor()
-        ),
+        Object::Int(i) => Object::Float((*i as f64).floor()),
+        Object::Float(i) => Object::Float((*i).floor()),
         o => Object::Error(format!("argument to `math_floor` not supported, got {}", o)),
     }
 }

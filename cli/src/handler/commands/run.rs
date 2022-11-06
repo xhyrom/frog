@@ -1,8 +1,13 @@
-use std::{cell::RefCell, rc::Rc, io::{Result, ErrorKind, Error}, fs};
+use std::{
+    cell::RefCell,
+    fs,
+    io::{Error, ErrorKind, Result},
+    rc::Rc,
+};
 
 use clap::ArgMatches;
-use frog_lang::{parser::Parser, lexer::Lexer};
-use frog_lang_evaluator::{Evaluator, builtins_functions::new_builtins, env::Env, object::Object};
+use frog_lang::{lexer::Lexer, parser::Parser};
+use frog_lang_evaluator::{builtins_functions::new_builtins, env::Env, object::Object, Evaluator};
 use frog_logger::error;
 
 pub fn handle(matches: &ArgMatches) {
