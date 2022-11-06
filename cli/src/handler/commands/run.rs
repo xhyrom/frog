@@ -7,7 +7,7 @@ use std::{
 
 use clap::ArgMatches;
 use frog_lang::{lexer::Lexer, parser::Parser};
-use frog_lang_evaluator::{builtins_functions::new_builtins, env::Env, object::Object, Evaluator};
+use frog_lang_evaluator::{builtin_functions::new_builtins, env::Env, object::Object, Evaluator};
 use frog_logger::error;
 
 pub fn handle(matches: &ArgMatches) {

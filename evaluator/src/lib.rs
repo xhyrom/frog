@@ -1,5 +1,5 @@
-pub mod builtins_functions;
-pub mod builtins_modules;
+pub mod builtin_functions;
+pub mod builtin_modules;
 pub mod env;
 pub mod object;
 
@@ -30,7 +30,7 @@ impl Evaluator {
         Evaluator {
             env,
             public_env: Rc::new(RefCell::new(vec![])),
-            builtin_modules: builtins_modules::new_builtins(),
+            builtin_modules: builtin_modules::new_builtins(),
             path: Path::new(&path).to_path_buf(),
         }
     }
