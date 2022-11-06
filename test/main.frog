@@ -1,8 +1,8 @@
 import "module";
 
-print(ahoj("hyro"));
+print(module.ahoj("hyro"));
 
-let fibo = fibo(50);
+let fibo = module.fibo(50);
 
 if (fibo > 50.0) {
     print("Fibonacci number is greater than 50");

@@ -6,7 +6,7 @@ Frog is an extremely simple language based on the monkey language
 - Implementations:
   - user-specified functions using keyword `fun X() {  }`
   - imports
-  - dot notation acess
+  - dot notation access
   - string, int, float, bool, char, arrray, hashmaps (data types)
   - Functions:
     - len - Get string length

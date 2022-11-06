@@ -42,4 +42,8 @@ impl Env {
     pub fn set(&mut self, name: String, value: &Object) {
         self.store.insert(name, value.clone());
     }
+
+    pub fn get_all(&mut self) -> &HashMap<String, Object> {
+        &self.store
+    }
 }

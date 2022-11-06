@@ -26,7 +26,11 @@ pub struct Evaluator {
 
 impl Evaluator {
     pub fn new(env: Rc<RefCell<Env>>, path: String) -> Self {
-        Evaluator { env, builtin_modules: builtins_modules::new_builtins(), path: Path::new(&path).to_path_buf() }
+        Evaluator {
+            env,
+            builtin_modules: builtins_modules::new_builtins(),
+            path: Path::new(&path).to_path_buf()
+        }
     }
 
     fn is_truthy(obj: Object) -> bool {
@@ -92,6 +96,7 @@ impl Evaluator {
                 } else {
                     let Ident(name) = ident;
                     self.env.borrow_mut().set(name, &value);
+                    
                     None
                 }
             }
@@ -164,6 +169,8 @@ impl Evaluator {
                     return self.eval_import_builtin(path);
                 }
 
+                let module_name = path.clone().replace("/", "_");
+
                 if let Some(parent) = self.path.parent() {
                     path = parent.join(path).to_str().unwrap().to_owned();
                 }
@@ -191,12 +198,32 @@ impl Evaluator {
                     }
                 };
 
-                if let Some(evaluated) = self.eval(program) {
+                let scoped_env = Rc::new(RefCell::new(Env::new_with_outer(Rc::clone(&self.env))));
+
+                let mut evaluator = Evaluator::new(scoped_env, file.to_owned());
+
+                if let Some(evaluated) = evaluator.eval(program) {
                     match evaluated {
                         Object::Error(err) => return Some(Self::error(format!("{}", err))),
                         _ => println!("{}", evaluated),
                     }
                 }
+
+                let mut map = HashMap::new();
+
+                for (name, value) in evaluator.env.borrow_mut().get_all() {
+                    map.insert(Object::String(name.to_owned()), value.to_owned());
+
+                    drop(name);
+                    drop(value);
+                }
+
+                self.env.borrow_mut().set(module_name, &Object::Hash(map));
+
+                drop(evaluator);
+                drop(parser);
+                drop(file);
+                drop(path);
             }
             _ => return Some(Self::error(format!("{} is not a string", value))),
         };
