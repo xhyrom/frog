@@ -52,7 +52,7 @@ fn run_line(evaluator: &mut Evaluator, line: String) -> Result<()> {
     if let Some(evaluated) = evaluator.eval(program) {
         match evaluated {
             Object::Error(err) => return Err(Error::new(ErrorKind::Other, format!("{}", err))),
-            _ => println!("{}", evaluated),
+            _ => print!("{}", evaluated),
         }
     }
 

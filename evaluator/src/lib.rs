@@ -217,7 +217,7 @@ impl Evaluator {
                 if let Some(evaluated) = evaluator.eval(program) {
                     match evaluated {
                         Object::Error(err) => return Some(Self::error(format!("{}", err))),
-                        _ => println!("{}", evaluated),
+                        _ => print!("{}", evaluated),
                     }
                 }
 
