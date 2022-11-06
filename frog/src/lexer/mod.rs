@@ -140,7 +140,7 @@ impl<'a> Lexer<'a> {
 
         loop {
             match self.ch {
-                b'a'..=b'z' | b'A'..=b'Z' | b'_' => {
+                b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' => {
                     self.read_char();
                 }
                 _ => {

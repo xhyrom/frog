@@ -1,0 +1,3 @@
+import "frog::math";
+
+print(math.log10(50));
