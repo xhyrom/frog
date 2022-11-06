@@ -37,6 +37,7 @@ pub type ParseErrors = Vec<ParseError>;
 
 pub struct Parser<'a> {
     lexer: Lexer<'a>,
+    previous_token: Token,
     current_token: Token,
     next_token: Token,
     errors: ParseErrors,
@@ -46,6 +47,7 @@ impl<'a> Parser<'a> {
     pub fn new(lexer: Lexer<'a>) -> Self {
         let mut parser = Parser {
             lexer,
+            previous_token: Token::Eof,
             current_token: Token::Eof,
             next_token: Token::Eof,
             errors: vec![],
@@ -75,8 +77,13 @@ impl<'a> Parser<'a> {
     }
 
     fn bump(&mut self) {
+        self.previous_token = self.current_token.clone();
         self.current_token = self.next_token.clone();
         self.next_token = self.lexer.next_token();
+    }
+
+    fn previous_token_is(&mut self, tok: &Token) -> bool {
+        self.previous_token == *tok
     }
 
     fn current_token_is(&mut self, tok: Token) -> bool {
@@ -157,6 +164,7 @@ impl<'a> Parser<'a> {
 
     fn parse_stmt(&mut self) -> Option<Stmt> {
         match self.current_token {
+            Token::Pub => self.parse_pub_stmt(),
             Token::Let => self.parse_let_stmt(),
             Token::Import => self.parse_import_stmt(),
             Token::Return => self.parse_return_stmt(),
@@ -165,7 +173,19 @@ impl<'a> Parser<'a> {
         }
     }
 
+    fn parse_pub_stmt(&mut self) -> Option<Stmt> {
+        self.bump();
+
+        match self.current_token {
+            Token::Let => self.parse_let_stmt(),
+            Token::Func => self.parse_expr_stmt(),
+            _ => None,
+        }
+    }
+
     fn parse_let_stmt(&mut self) -> Option<Stmt> {
+        let public = self.previous_token_is(&Token::Pub);
+
         match &self.next_token {
             Token::Ident(_) => self.bump(),
             _ => return None,
@@ -191,7 +211,7 @@ impl<'a> Parser<'a> {
             self.bump();
         }
 
-        Some(Stmt::Let(name, expr))
+        Some(Stmt::Let(name, expr, public))
     }
 
     fn parse_import_stmt(&mut self) -> Option<Stmt> {
@@ -542,6 +562,8 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_func_expr(&mut self) -> Option<Expr> {
+        let public = self.previous_token_is(&Token::Pub);
+
         match &self.next_token {
             Token::Ident(_) => self.bump(),
             _ => return None,
@@ -567,6 +589,7 @@ impl<'a> Parser<'a> {
             name,
             params,
             body: self.parse_block_stmt(),
+            public,
         })
     }
 

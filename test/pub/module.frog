@@ -1,0 +1,5 @@
+let test = "co";
+
+pub fun main() {
+    return test;
+}

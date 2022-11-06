@@ -20,6 +20,7 @@ use self::object::*;
 #[derive(Debug)]
 pub struct Evaluator {
     env: Rc<RefCell<Env>>,
+    public_env: Rc<RefCell<Vec<String>>>,
     builtin_modules: HashMap<String, HashMap<String, Object>>,
     path: PathBuf,
 }
@@ -28,6 +29,7 @@ impl Evaluator {
     pub fn new(env: Rc<RefCell<Env>>, path: String) -> Self {
         Evaluator {
             env,
+            public_env: Rc::new(RefCell::new(vec![])),
             builtin_modules: builtins_modules::new_builtins(),
             path: Path::new(&path).to_path_buf(),
         }
@@ -86,7 +88,7 @@ impl Evaluator {
 
     fn eval_stmt(&mut self, stmt: Stmt) -> Option<Object> {
         match stmt {
-            Stmt::Let(ident, expr) => {
+            Stmt::Let(ident, expr, public) => {
                 let value = match self.eval_expr(expr) {
                     Some(value) => value,
                     None => return None,
@@ -94,8 +96,12 @@ impl Evaluator {
                 if Self::is_error(&value) {
                     Some(value)
                 } else {
-                    let Ident(name) = ident;
-                    self.env.borrow_mut().set(name, &value);
+                    let Ident(ref name) = ident;
+
+                    self.env.borrow_mut().set(name.to_owned(), &value);
+                    if public {
+                        self.public_env.borrow_mut().push(name.to_owned());
+                    }
 
                     None
                 }
@@ -152,7 +158,12 @@ impl Evaluator {
                 consequence,
                 alternative,
             } => self.eval_if_expr(*cond, consequence, alternative),
-            Expr::Func { name, params, body } => Some(self.eval_func_expr(name, params, body)),
+            Expr::Func {
+                name,
+                params,
+                body,
+                public,
+            } => Some(self.eval_func_expr(name, params, body, public)),
             Expr::Call { func, args } => Some(self.eval_call_expr(func, args)),
         }
     }
@@ -201,9 +212,7 @@ impl Evaluator {
                     }
                 };
 
-                let scoped_env = Rc::new(RefCell::new(Env::new_with_outer(Rc::clone(&self.env))));
-
-                let mut evaluator = Evaluator::new(scoped_env, file.to_owned());
+                let mut evaluator = Evaluator::new(Rc::new(RefCell::new(Env::new())), path);
 
                 if let Some(evaluated) = evaluator.eval(program) {
                     match evaluated {
@@ -214,11 +223,16 @@ impl Evaluator {
 
                 let mut map = HashMap::new();
 
-                for (name, value) in evaluator.env.borrow_mut().get_all() {
-                    map.insert(Object::String(name.to_owned()), value.to_owned());
+                for name in evaluator.public_env.borrow_mut().iter() {
+                    let value = evaluator.env.borrow_mut().get(name.to_owned());
+                    if value.is_none() {
+                        continue;
+                    }
+
+                    let value = value.unwrap();
+                    map.insert(Object::String(name.to_owned()), value);
 
                     drop(name);
-                    drop(value);
                 }
 
                 self.env.borrow_mut().set(module_name, &Object::Hash(map));
@@ -226,7 +240,6 @@ impl Evaluator {
                 drop(evaluator);
                 drop(parser);
                 drop(file);
-                drop(path);
             }
             _ => return Some(Self::error(format!("{} is not a string", value))),
         };
@@ -399,6 +412,7 @@ impl Evaluator {
     fn eval_infix_string_expr(&mut self, infix: Infix, left: String, right: String) -> Object {
         match infix {
             Infix::Plus => Object::String(format!("{}{}", left, right)),
+            Infix::Equal => Object::Bool(left == right),
             _ => Object::Error(String::from(format!(
                 "unknown operator: {} {} {}",
                 left, infix, right
@@ -469,10 +483,20 @@ impl Evaluator {
         }
     }
 
-    fn eval_func_expr(&mut self, name: Ident, params: Vec<Ident>, body: BlockStmt) -> Object {
-        let Ident(name) = name;
+    fn eval_func_expr(
+        &mut self,
+        name: Ident,
+        params: Vec<Ident>,
+        body: BlockStmt,
+        public: bool,
+    ) -> Object {
+        let Ident(ref name) = name;
         let func = Object::Func(name.to_owned(), params, body, Rc::clone(&self.env));
-        self.env.borrow_mut().set(name, &func);
+
+        self.env.borrow_mut().set(name.to_owned(), &func);
+        if public {
+            self.public_env.borrow_mut().push(name.to_owned());
+        }
 
         func
     }

@@ -67,6 +67,7 @@ pub enum Expr {
         name: Ident,
         params: Vec<Ident>,
         body: BlockStmt,
+        public: bool,
     },
     Call {
         func: Box<Expr>,
@@ -88,7 +89,7 @@ pub enum Literal {
 #[derive(PartialEq, Clone, Debug)]
 pub enum Stmt {
     Blank,
-    Let(Ident, Expr),
+    Let(Ident, Expr, bool),
     Import(Expr),
     Return(Expr),
     Expr(Expr),

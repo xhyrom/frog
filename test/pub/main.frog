@@ -1,0 +1,7 @@
+import "module";
+
+if (module.test) {
+    print("weird");
+}
+
+print(module.main());
