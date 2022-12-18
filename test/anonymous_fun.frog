@@ -4,3 +4,7 @@ print(Lol.test())
 print(Lol.kul())
 print(omg())
 print(kul())
+
+(fun () {
+    print("kul2");
+})()
