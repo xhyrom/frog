@@ -1,0 +1,6 @@
+let Lol = { "test": fun omg () { return "ok" }, "kul": fun () { return "ok kul" } };
+
+print(Lol.test())
+print(Lol.kul())
+print(omg())
+print(kul())

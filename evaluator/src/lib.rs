@@ -485,20 +485,29 @@ impl Evaluator {
 
     fn eval_func_expr(
         &mut self,
-        name: Ident,
+        name: Option<Ident>,
         params: Vec<Ident>,
         body: BlockStmt,
         public: bool,
     ) -> Object {
-        let Ident(ref name) = name;
-        let func = Object::Func(name.to_owned(), params, body, Rc::clone(&self.env));
-
-        self.env.borrow_mut().set(name.to_owned(), &func);
-        if public {
-            self.public_env.borrow_mut().push(name.to_owned());
+        if let Some(name) = name {
+            let Ident(ref name) = name;
+            let func = Object::Func(Some(name.to_owned()), params, body, Rc::clone(&self.env));
+    
+            self.env.borrow_mut().set(name.to_owned(), &func);
+            if public {
+                self.public_env.borrow_mut().push(name.to_owned());
+            }
+    
+            func
+        } else {
+            Object::Func(
+                None,
+                params,
+                body,
+                Rc::clone(&self.env),
+            )
         }
-
-        func
     }
 
     fn eval_call_expr(&mut self, func: Box<Expr>, args: Vec<Expr>) -> Object {

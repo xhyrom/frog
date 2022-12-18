@@ -64,7 +64,7 @@ pub enum Expr {
         alternative: Option<BlockStmt>,
     },
     Func {
-        name: Ident,
+        name: Option<Ident>,
         params: Vec<Ident>,
         body: BlockStmt,
         public: bool,

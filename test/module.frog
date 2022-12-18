@@ -1,10 +1,10 @@
 import "frog::math";
 
-fun ahoj(name) {
+pub fun ahoj(name) {
     return "ahooojky " + name;
 }
 
-fun fibo(n) {
+pub fun fibo(n) {
     let phi = (1.0 + math.sqrt(5))/2.0;
     let asymp = math.pow(phi, n) / math.sqrt(5);
 

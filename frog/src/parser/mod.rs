@@ -566,12 +566,12 @@ impl<'a> Parser<'a> {
 
         match &self.next_token {
             Token::Ident(_) => self.bump(),
-            _ => return None,
+            _ => (),
         };
 
         let name = match self.parse_ident() {
-            Some(name) => name,
-            None => return None,
+            Some(name) => Some(name),
+            None => None,
         };
 
         self.bump();

@@ -19,7 +19,7 @@ pub enum Object {
     Bool(bool),
     Array(Vec<Object>),
     Hash(HashMap<Object, Object>),
-    Func(String, Vec<Ident>, BlockStmt, Rc<RefCell<Env>>),
+    Func(Option<String>, Vec<Ident>, BlockStmt, Rc<RefCell<Env>>),
     Builtin(i32, BuiltinFunc),
     Null,
     ReturnValue(Box<Object>),
@@ -65,7 +65,12 @@ impl fmt::Display for Object {
                         result.push_str(&format!(", {}", s));
                     }
                 }
-                write!(f, "fun {}({}) {{ ... }}", name, result)
+
+                if let Some(ref name) = *name {
+                    write!(f, "fun {}({}) {{ ... }}", name, result)
+                } else {
+                    write!(f, "fun ({}) {{ ... }}", result)
+                }
             }
             Object::Builtin(_, _) => write!(f, "[builtin function]"),
             Object::Null => write!(f, "null"),
