@@ -23,3 +23,35 @@ Macros are defined as follows:
 Imports are defined as follows:
 
 1. An import starts with `#import X as Y` and ends at the end of the line.
+
+Preprocessor will put content of the file `X` into the source code instead of the import statement. The import statement will be removed.
+
+### Before
+
+file1
+
+```
+fn log(text: String) {
+  print(text);
+}
+```
+
+main
+
+```
+#import "./file1" as TEST
+
+TEST.log("Hello world!"); // not sure if this will be designed like this
+```
+
+### After
+
+main
+
+```
+module TEST {
+  log("Hello world!");
+}
+
+TEST.log("Hello world!");
+```
