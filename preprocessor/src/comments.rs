@@ -1,10 +1,13 @@
 pub fn remove_comments(input: &str) -> String {
   let mut output = String::new();
-  let per_line = input.lines();
+
+  let lines: Vec<String> = input.lines()
+    .map(|line| line.to_string())
+    .collect();
 
   let mut multiline_comment = false;
 
-  for line in per_line {
+  for (i, line) in lines.iter().enumerate() {
     let mut line = line.to_string();
     let sinleline_comment = line.find("//");
     let multiline_comment_start = line.find("/*");
@@ -34,6 +37,10 @@ pub fn remove_comments(input: &str) -> String {
     }
 
     output.push_str(&line);
+
+    if i != lines.len() - 1 {
+      output.push_str("\n");
+    }
   }
 
   output
@@ -86,6 +93,14 @@ mod tests {
   fn test_remove_comments_singleline_in_multiline() {
     let input = "/* This is a // comment */val lol = 1";
     let expected = "val lol = 1";
+    let actual = remove_comments(input);
+    assert_eq!(expected, actual);
+  }
+
+  #[test]
+  fn test_remove_comments_more_lines() {
+    let input = "/* This is a */val lol = 1\nval x = 8";
+    let expected = "val lol = 1\nval x = 8";
     let actual = remove_comments(input);
     assert_eq!(expected, actual);
   }
