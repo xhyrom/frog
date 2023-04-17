@@ -3,23 +3,14 @@
 ## The syntax is based on the following principles:
 
 1.  The syntax should be as simple as possible
-
 2.  The syntax should be as regular as possible
-
 3.  The syntax should be as unambiguous as possible
-
 4.  The syntax should be as readable as possible
-
 5.  The syntax should be as concise as possible
-
 6.  The syntax should be as consistent as possible
-
 7.  The syntax should be as extensible as possible
-
 8.  The syntax should be as familiar as possible
-
 9.  The syntax should be as easy to learn as possible
-
 10. The syntax should be as easy to parse as possible
 
 ## Examples of the syntax are given in the examples section.
