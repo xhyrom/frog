@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+  "preprocessor",
+  "lexer",
+  "parser",
+  "compiler"
+]
