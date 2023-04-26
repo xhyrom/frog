@@ -1,47 +1,13 @@
+use regex::Regex;
+
 pub fn remove_comments(input: &str) -> String {
-  let mut output = String::new();
+  let mut output = input.to_string();
 
-  let lines: Vec<String> = input.lines()
-    .map(|line| line.to_string())
-    .collect();
+  let single_line_regex = Regex::new(r"(?m)\/\/.*").unwrap();
+  output = single_line_regex.replace_all(input, "").to_string();
 
-  let mut multiline_comment = false;
-
-  for (i, line) in lines.iter().enumerate() {
-    let mut line = line.to_string();
-    let sinleline_comment = line.find("//");
-    let multiline_comment_start = line.find("/*");
-
-    if let Some(index) = multiline_comment_start {
-      let index_end = line.find("*/");
-
-      if let Some(index_end) = index_end {
-        line = format!("{}{}", &line[..index], &line[index_end + 2..]);
-      } else {
-        line = line[..index].to_string();
-        multiline_comment = true;
-      }
-    } else if multiline_comment {
-      let index = line.find("*/");
-
-      if let Some(index) = index {
-        line = line[index + 2..].to_string();
-        multiline_comment = false;
-      } else {
-        line = "".to_string();
-      }
-    }
-
-    if let Some(index) = sinleline_comment {
-      line.truncate(index);
-    }
-
-    output.push_str(&line);
-
-    if i != lines.len() - 1 {
-      output.push_str("\n");
-    }
-  }
+  let multiline_regex = Regex::new(r"(?s)\/\*.*?\*\/").unwrap();
+  output = multiline_regex.replace_all(&output, "").to_string();
 
   output
 }
@@ -91,6 +57,7 @@ mod tests {
 
   #[test]
   fn test_remove_comments_singleline_in_multiline() {
+    // TODO: fix this, comment in multiline comment throws error
     let input = "/* This is a // comment */val lol = 1";
     let expected = "val lol = 1";
     let actual = remove_comments(input);
